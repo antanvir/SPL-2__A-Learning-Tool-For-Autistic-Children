@@ -12,6 +12,8 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(774, 604)
+        MainWindow.setGeometry(200, 150, 800, 550)
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.rb1 = QtWidgets.QRadioButton(self.centralwidget)
@@ -57,17 +59,18 @@ class Ui_MainWindow(object):
         self.submitBut.clicked.connect(self.getText)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        
         self.rb1.setText(_translate("MainWindow", "Mango"))
         self.rb2.setText(_translate("MainWindow", "Banana"))
         self.rb3.setText(_translate("MainWindow", "Cherry"))
         self.rb4.setText(_translate("MainWindow", "Apple"))
         self.object_label.setText(_translate("MainWindow", "    What is the Object?"))
         self.submitBut.setText(_translate("MainWindow", "submit"))
-
+        
     def setDB(self):
         mydb = mysql.connector.connect(
                 host = 'localhost',
@@ -143,6 +146,7 @@ class Ui_MainWindow(object):
             print(self.rb4.text())
             self.checkAnswer(self.rb4.text())
 
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -151,4 +155,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

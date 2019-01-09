@@ -1,3 +1,5 @@
+
+
 import sys
 from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
@@ -11,113 +13,15 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage, QImageReader
 from PyQt5.QtWidgets import QVBoxLayout
 import mysql.connector
 from PyQt5.QtMultimedia import QSound
+from qus2 import Ui_MainWindow
 #from PyQt5.QtCore import pyqtSlot
 
 
 class App(QWidget):
 
-    file = ""
     curFileId = 1
 
-    def showImage(self, filepath):
-
-        self.label.clear()
-        print("from showImage function: ", filepath)
-
-        pixmap = QtGui.QPixmap(filepath)
-        pixmap = pixmap.scaled(self.label.width(),
-                               self.label.height(), QtCore.Qt.KeepAspectRatio)
-        self.label.setPixmap(pixmap)
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
-        # print("doesn't show")
-
-    def play_audio(self):
-        mydb = mysql.connector.connect(
-                host = 'localhost',
-                user = "anika",
-                passwd = "hridita123",
-                database = "loginDB"
-                #auth_plugin='mysql_native_password'
-                )
-        myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT audioName FROM item where object_id=8"
-        myCursor.execute(sql)
-        row=myCursor.fetchone()
-        for file in row:
-            print(file)
-            ifileName=str(file)
-            #print("lol"+ifileName)
-            if ifileName:
-                QSound.play(ifileName)
-                #self.setImage(ifileName)
-        myCursor.close()
-        mydb.close()
-
-    def on_click_prev(self):
-        mydb = mysql.connector.connect(
-            host='localhost',
-            user="anika",
-            passwd="hridita123",
-            database="imageDB"
-            # auth_plugin='mysql_native_password'
-        )
-        myCursor = mydb.cursor()
-        # global curFileId
-        if (App.curFileId - 1) < 1:
-            self.buttonP.hide()
-        else:
-
-            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s",(App.curFileId-1))
-            sql = "SELECT Path FROM ImagePath where Image_ID = %s"
-            val = (App.curFileId - 1,)
-            myCursor.execute(sql, val)
-            result = myCursor.fetchone()
-            for record in result:
-                print(record)
-                #file = record
-                self.showImage(record)
-                # global curFileId
-                App.curFileId -= 1
-                record = ""
-        myCursor.close()
-        mydb.close()
-
-    def on_click_next(self):
-        print("in next click")
-        mydb = mysql.connector.connect(
-            host='localhost',
-            user="anika",
-            passwd="hridita123",
-            database="imageDB"
-            # auth_plugin='mysql_native_password'
-        )
-        myCursor = mydb.cursor(buffered=True)
-
-        myCursor.execute("SELECT Path FROM ImagePath")
-        myresult = myCursor.fetchall()
-        total = myCursor.rowcount
-
-        #global curFileId
-
-        print(" total: ", total, " curFileId: ", App.curFileId)
-        if (App.curFileId + 1) > total:
-            self.buttonN.hide()
-        else:
-            #global curFileId
-            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s", (App.curFileId+1))
-            sql = "SELECT Path FROM ImagePath where Image_ID = %s"
-            val = (App.curFileId + 1,)
-            myCursor.execute(sql, val)
-            myresult = myCursor.fetchone()
-            for data in myresult:
-                print(data)
-                #file = record
-                self.showImage(data)
-                #global curFileId
-                App.curFileId += 1
-                data = ""
-        myCursor.close()
-        mydb.close()
+    
 
     def __init__(self):
         super().__init__()
@@ -208,7 +112,7 @@ class App(QWidget):
     #audio button widget
         self.pushButton = QPushButton('Play Audio',self)
         self.pushButton.setToolTip('play audio')
-        self.pushButton.move(250, 550)
+        self.pushButton.setGeometry(100, 550, 375, 28)
         self.pushButton.clicked.connect(self.play_audio)
 
     # Previous button widget
@@ -224,6 +128,9 @@ class App(QWidget):
         self.buttonN.clicked.connect(self.on_click_next)
 
         self.show()
+
+
+    # ================== All User Defined Functions ====================== #
 
     def exitCall(self):
         sys.exit(app.exec_())
@@ -254,6 +161,113 @@ class App(QWidget):
     def handleError(self):
         self.playButton.setEnabled(False)
         self.errorLabel.setText("Error: " + self.mediaPlayer.errorString())
+
+    def showImage(self, filepath):
+
+        self.label.clear()
+        print("from showImage function: ", filepath)
+
+        pixmap = QtGui.QPixmap(filepath)
+        pixmap = pixmap.scaled(self.label.width(),
+                               self.label.height(), QtCore.Qt.KeepAspectRatio)
+        self.label.setPixmap(pixmap)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        # print("doesn't show")
+
+    def play_audio(self):
+        mydb = mysql.connector.connect(
+                host = 'localhost',
+                user = "anika",
+                passwd = "hridita123",
+                database = "loginDB"
+                #auth_plugin='mysql_native_password'
+                )
+        myCursor = mydb.cursor(buffered=True)
+        sql = "SELECT audioName FROM item where object_id=8"
+        myCursor.execute(sql)
+        row=myCursor.fetchone()
+        for file in row:
+            print(file)
+            ifileName=str(file)
+            #print("lol"+ifileName)
+            if ifileName:
+                QSound.play(ifileName)
+                #self.setImage(ifileName)
+        myCursor.close()
+        mydb.close()
+
+    def on_click_prev(self):
+        mydb = mysql.connector.connect(
+            host='localhost',
+            user="anika",
+            passwd="hridita123",
+            database="imageDB"
+            # auth_plugin='mysql_native_password'
+        )
+        myCursor = mydb.cursor()
+        # global curFileId
+        if (App.curFileId - 1) < 1:
+            self.buttonP.hide()
+        else:
+            self.buttonN.show()
+            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s",(App.curFileId-1))
+            sql = "SELECT Path FROM ImagePath where Image_ID = %s"
+            val = (App.curFileId - 1,)
+            myCursor.execute(sql, val)
+            result = myCursor.fetchone()
+            for record in result:
+                print(record)
+                #file = record
+                self.showImage(record)
+                # global curFileId
+                App.curFileId -= 1
+        myCursor.close()
+        mydb.close()
+
+    def on_click_next(self):
+        print("in next click")
+        mydb = mysql.connector.connect(
+            host='localhost',
+            user="anika",
+            passwd="hridita123",
+            database="imageDB"
+            # auth_plugin='mysql_native_password'
+        )
+        myCursor = mydb.cursor(buffered=True)
+
+        myCursor.execute("SELECT Path FROM ImagePath")
+        myresult = myCursor.fetchall()
+        total = myCursor.rowcount
+
+        #global curFileId
+
+        print(" total: ", total, " curFileId: ", App.curFileId)
+        if (App.curFileId + 1) > total:
+            self.buttonN.hide()
+            self.showQuestionWindow()
+            print("Question window called")
+        else:
+            self.buttonP.show()
+            #global curFileId
+            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s", (App.curFileId+1))
+            sql = "SELECT Path FROM ImagePath where Image_ID = %s"
+            val = (App.curFileId + 1,)
+            myCursor.execute(sql, val)
+            myresult = myCursor.fetchone()
+            for data in myresult:
+                print(data)
+                #file = record
+                self.showImage(data)
+                #global curFileId
+                App.curFileId += 1
+        myCursor.close()
+        mydb.close()
+
+    def showQuestionWindow(self):
+        self.QuesWindow = QtWidgets.QMainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self.QuesWindow)
+        self.QuesWindow.show()
 
 
 if __name__ == '__main__':
