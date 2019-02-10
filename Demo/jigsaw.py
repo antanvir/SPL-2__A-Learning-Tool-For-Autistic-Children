@@ -1,20 +1,23 @@
+# ===========Remaining Tasks======== #
+# Correct Image Tile detect, if incorrect should be placed on top
+# Space between Tiles should be black
+# Usage incomplete for the image booleans
+
+
 import sys
 import random
 import pygame
 from pygame.locals import *
 
-#IMAGE_FILE = "mango.jpg"
+
 image = pygame.image.load("mango.jpg")
 
-image1 = pygame.image.load("IMG-0.jpg")
-image2 = pygame.image.load("IMG-1.jpg")
-image3 = pygame.image.load("IMG-2.jpg")
-image4 = pygame.image.load("IMG-3.jpg")
+
 
 width, height = image.get_size()
 
 IMAGE_SIZE = (width, height)
-DISPLAY_SIZE = (2*width+50, 2*height+50)
+DISPLAY_SIZE = (2 * width + 50, 2 * height + 50)
 
 COLUMNS = 2
 ROWS = 2
@@ -23,54 +26,94 @@ TILE_WIDTH = int(width / COLUMNS) + 1
 TILE_HEIGHT = int(height / ROWS) + 1
 
 
-#my_font = pygame.font.SysFont("arial", 16)
-#text_surface = my_font.render("Pygame is cool!", True, (0,0,0), (255, 255, 255))
-MAGENTA = (255, 0, 255)
+SILVER = (192, 192, 192)
+GRAY = (128, 128, 128)
+BLACK = (0, 0, 0)
 
-hor_border = pygame.Surface((TILE_WIDTH + 1, 1))
-hor_border.fill(MAGENTA)
-ver_border = pygame.Surface((1, TILE_HEIGHT + 1))
-ver_border.fill(MAGENTA)
+silver_rect = pygame.Surface((TILE_WIDTH , TILE_HEIGHT))
+silver_rect.fill(SILVER)
+gray_rect = pygame.Surface((TILE_WIDTH, TILE_HEIGHT))
+gray_rect.fill(GRAY)
+black_rect = pygame.Surface((TILE_WIDTH , TILE_HEIGHT))
+black_rect.fill(BLACK)
 
-
+screen_middle = Rect((0, TILE_HEIGHT + 5), (2 * width + 50, height - (TILE_HEIGHT + 5)) )
+screen_left = Rect((0, TILE_HEIGHT + 5), (TILE_WIDTH, 2 * height + 50 - (TILE_HEIGHT + 5)) )
+screen_right = Rect((3 * TILE_WIDTH + 1, TILE_HEIGHT + 5), 
+                ((2 * width + 50 - (3 * TILE_WIDTH + 1)), 2 * height + 50 - (TILE_HEIGHT + 5)) )
+screen_down = Rect((0, 2 * height + 1), (2 * width + 50, 50 - 1))
 
 
 pygame.init()
 display = pygame.display.set_mode(DISPLAY_SIZE, 0, 32)
 pygame.display.set_caption("Picture Drag and Drop")
-#display.blit(image, (0, 0))
 
-display.blit(image1, (10, 5))
+image1 = pygame.image.load("IMG-0.jpg").convert_alpha()
+image2 = pygame.image.load("IMG-1.jpg")
+image3 = pygame.image.load("IMG-2.jpg")
+image4 = pygame.image.load("IMG-3.jpg")
+
+display.blit(image1, (0, 5))
 display.blit(image2, (10*2 + TILE_WIDTH, 5))
 display.blit(image3, (10*3 + 2*TILE_WIDTH, 5))
 display.blit(image4, (10*4 + 3*TILE_WIDTH, 5))
 
-for c in range(COLUMNS):
-    for r in range(ROWS):
-        display.blit(hor_border, ( (r+1) * TILE_WIDTH, height))
-        display.blit(hor_border, ( (r+1) *TILE_WIDTH, height + TILE_HEIGHT -1 ))
-        display.blit(ver_border, ( (r+1) *TILE_WIDTH, height))
-        display.blit(ver_border, ( (r+1) * 2 * TILE_WIDTH -1, height))
+
+display.blit(silver_rect, (TILE_WIDTH, height))
+display.blit(gray_rect, (2 * TILE_WIDTH + 1, height))
+display.blit(gray_rect, (TILE_WIDTH, height + TILE_HEIGHT + 1))
+display.blit(silver_rect, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
+
+pygame.display.flip()
+
+
+left_button_pressed = False
+mouse_dragged = False
+
+image1_placed = False
+image2_placed = False
+image3_placed = False
+image4_placed = False
+
 
 while True:
     #pass
+    #reload()
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
-    '''display.blit(image1, (10, 5))
-    display.blit(image2, (10*2 + TILE_WIDTH, 5))
-    display.blit(image3, (10*3 + 2*TILE_WIDTH, 5))
-    display.blit(image4, (10*4 + 3*TILE_WIDTH, 5))'''
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1:
+            left_button_pressed = True
+            display.blit(black_rect, (0, 5))
 
-    display.blit(hor_border, (TILE_WIDTH, height))
-    display.blit(hor_border, (TILE_WIDTH, height + TILE_HEIGHT -1 ))
-    display.blit(ver_border, (TILE_WIDTH, height))
-    display.blit(ver_border, (2 * TILE_WIDTH -1, height))
-    '''for c in range(COLUMNS):
-        for r in range(ROWS):
-            tile = image.subsurface(
-                c * TILE_WIDTH, 0,
-                TILE_WIDTH, TILE_HEIGHT)'''
+        elif left_button_pressed and event.type == pygame.MOUSEMOTION:
+            mouseX, mouseY = pygame.mouse.get_pos()
+            mouseX -= TILE_WIDTH / 2
+            mouseY -= TILE_HEIGHT / 2
+            if mouseY > TILE_HEIGHT + 5:
+                display.blit(image1, (mouseX, mouseY))
+                display.blit(black_rect, (0, 5))
 
 
-    pygame.display.flip()
+            mouse_dragged = True
+
+        elif mouse_dragged and event.type == pygame.MOUSEBUTTONUP:
+            mouseX, mouseY = pygame.mouse.get_pos()
+            mouseX -= TILE_WIDTH / 2
+            mouseY -= TILE_HEIGHT / 2
+            display.blit(image1, (mouseX, mouseY))
+            pygame.display.flip()
+
+            left_button_pressed = False
+            mouse_dragged = False
+
+        pygame.display.flip()
+        display.fill(BLACK, screen_middle)
+        display.fill(BLACK, screen_left)
+        display.fill(BLACK, screen_right)
+        display.fill(BLACK, screen_down)
+
+        display.blit(silver_rect, (TILE_WIDTH, height))
+        display.blit(gray_rect, (2 * TILE_WIDTH + 1, height))
+        display.blit(gray_rect, (TILE_WIDTH, height + TILE_HEIGHT + 1))
+        display.blit(silver_rect, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
