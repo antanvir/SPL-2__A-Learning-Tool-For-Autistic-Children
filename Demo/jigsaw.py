@@ -99,6 +99,7 @@ while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             exit()
+
         elif event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1: 
             left_button_pressed = True
 
@@ -107,36 +108,21 @@ while True:
             if (0 <= mouseX <= TILE_WIDTH) and (5 <= mouseY <= TILE_HEIGHT + 5):
                 image1_dragged = True
                 display.blit(black_rect, (0, 5))
-                #display.blit(image1, (mouseX, mouseY))
-                
+                    #display.blit(image1, (mouseX, mouseY))
+                    
             elif (10*2 + TILE_WIDTH <= mouseX <= 10*2 + 2*TILE_WIDTH) and (5 <= mouseY <= TILE_HEIGHT + 5):
-                image2_dragged = True
-                display.blit(black_rect, (10*2 + TILE_WIDTH, 5))
+                    image2_dragged = True
+                    display.blit(black_rect, (10*2 + TILE_WIDTH, 5))
 
             elif (10*3 + 2*TILE_WIDTH <= mouseX <= 10*2 + 3*TILE_WIDTH) and (5 <= mouseY <= TILE_HEIGHT + 5):
-                image3_dragged = True
-                display.blit(black_rect, (10*3 + 2*TILE_WIDTH, 5))
+                    image3_dragged = True
+                    display.blit(black_rect, (10*3 + 2*TILE_WIDTH, 5))
 
             elif (10*4 + 3*TILE_WIDTH <= mouseX <= 10*2 + 4*TILE_WIDTH) and (5 <= mouseY <= TILE_HEIGHT + 5):
-                image4_dragged = True
-                display.blit(black_rect, (10*4 + 3*TILE_WIDTH, 5))
+                    image4_dragged = True
+                    display.blit(black_rect, (10*4 + 3*TILE_WIDTH, 5))
 
 
-        elif left_button_pressed and event.type == pygame.MOUSEBUTTONUP:
-            left_button_pressed = False
-
-            if image1_dragged:
-                display.blit(image1, (0, 5))
-                image1_dragged = False
-            elif image2_dragged:
-                display.blit(image2, (10*2 + TILE_WIDTH, 5))
-                image2_dragged = False
-            elif image3_dragged:
-                display.blit(image3, (10*3 + 2*TILE_WIDTH, 5))
-                image3_dragged = False
-            elif image4_dragged:
-                display.blit(image4, (10*4 + 3*TILE_WIDTH, 5))
-                image4_dragged = False
 
 
         elif left_button_pressed and event.type == pygame.MOUSEMOTION:
@@ -147,7 +133,7 @@ while True:
             mouseY -= TILE_HEIGHT / 2
             #display.blit(image1, (mouseX, mouseY))
 
-            if mouseY > TILE_HEIGHT + 5:
+            if mouseY  > TILE_HEIGHT + 5:
                 if image1_dragged:
                     display.blit(image1, (mouseX, mouseY))
                     #display.blit(black_rect, (0, 5))
@@ -166,22 +152,35 @@ while True:
             
 
         elif mouse_dragged and event.type == pygame.MOUSEBUTTONUP:
+            print("here")
             mouseX, mouseY = pygame.mouse.get_pos()
-            mouseX -= TILE_WIDTH / 2
-            mouseY -= TILE_HEIGHT / 2
-            #display.blit(image1, (mouseX, mouseY))
-            #pygame.display.flip()
+            #mouseX -= TILE_WIDTH / 2
+            #mouseY -= TILE_HEIGHT / 2
 
-            if (TILE_WIDTH <= mouseX <= 2*TILE_WIDTH) and (height <= mouseY <= height + TILE_HEIGHT):
-                if image1_dragged:
-                    display.blit(image1, (TILE_WIDTH, height))
-                    image1_placed = True
-                else:
-                    image1_dragged = False
+            if mouseX < TILE_WIDTH and mouseY < height:
+            	mouse_dragged = False
+            	if image1_dragged:
+            		display.blit(image1, (0, 5))
+            		image1_dragged = False
+            	elif image2_dragged:
+            		display.blit(image2, (10*2 + TILE_WIDTH, 5))
+            		image2_dragged = False
+            	elif image3_dragged:
+            		display.blit(image3, (10*3 + 2*TILE_WIDTH, 5))
+            		image3_dragged = False
+            	elif image4_dragged:
+            		display.blit(image4, (10*4 + 3*TILE_WIDTH, 5))
+            		image4_dragged = False
 
-
-            left_button_pressed = False
-            mouse_dragged = False
+            else:
+            	left_button_pressed = False
+            	mouse_dragged = False
+            	if (TILE_WIDTH <= mouseX <= 2*TILE_WIDTH) and (height <= mouseY <= height + TILE_HEIGHT):
+            		if image1_dragged:
+            			display.blit(image1, (TILE_WIDTH, height))
+            			image1_placed = True
+            		else:
+	                    image1_dragged = False
 
         pygame.display.flip()
         display.fill(BLACK, screen_middle)
@@ -189,12 +188,21 @@ while True:
         display.fill(BLACK, screen_right)
         display.fill(BLACK, screen_down)
         if image1_placed:
-            print("hi")
+            #print("hi")
             display.blit(image1, (TILE_WIDTH, height))
         else:
             display.blit(silver_rect, (TILE_WIDTH, height))
         #display.blit(silver_rect, (TILE_WIDTH, height))
-        display.blit(gray_rect, (2 * TILE_WIDTH + 1, height))
-        display.blit(gray_rect, (TILE_WIDTH, height + TILE_HEIGHT + 1))
-        display.blit(silver_rect, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
+        if image2_placed:
+            display.blit(image2, (2 * TILE_WIDTH + 1, height))
+        else:
+            display.blit(gray_rect, (2 * TILE_WIDTH + 1, height))
+        if image3_placed:
+            display.blit(image3, (TILE_WIDTH, height + TILE_HEIGHT + 1)) 
+        else:  
+            display.blit(gray_rect, (TILE_WIDTH, height + TILE_HEIGHT + 1))
+        if image4_placed:
+            display.blit(image4, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
+        else:
+            display.blit(silver_rect, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
         pygame.display.flip()
