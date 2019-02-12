@@ -154,25 +154,25 @@ while True:
 					if image1_dragged:
 						display.blit(image1, (TILE_WIDTH, height))
 						image1_placed = True
-					image1_dragged = False
+					
 
 				elif (2*TILE_WIDTH + 1 <= mouseX <= 3*TILE_WIDTH) and (height <= mouseY <= height + TILE_HEIGHT):
 					if image2_dragged:
 						display.blit(image2, (2 * TILE_WIDTH + 1, height))
 						image2_placed = True
-					image2_dragged = False
+					
 
 				elif (TILE_WIDTH <= mouseX <= 2*TILE_WIDTH) and (height + TILE_HEIGHT + 1 <= mouseY <= height + 2*TILE_HEIGHT):
 					if image3_dragged:
 						display.blit(image3, (TILE_WIDTH, height + TILE_HEIGHT + 1))
 						image3_placed = True
-					image3_dragged = False
+					
 
 				elif (2*TILE_WIDTH + 1 <= mouseX <= 3*TILE_WIDTH) and (height + TILE_HEIGHT + 1 <= mouseY <= height + 2*TILE_HEIGHT):
 					if image4_dragged:
 						display.blit(image4, (2 * TILE_WIDTH + 1, height + TILE_HEIGHT + 1))
 						image4_placed = True
-					image4_dragged = False
+					
 
 				if image1_placed == False:
 					display.blit(image1, (0, 5))
@@ -185,6 +185,11 @@ while True:
 
 				if image4_placed == False:
 					display.blit(image4, (10*4 + 3*TILE_WIDTH, 5))
+
+				image1_dragged = False
+				image2_dragged = False
+				image3_dragged = False
+				image4_dragged = False
 
 		pygame.display.flip()
 		display.fill(BLACK, screen_middle)
