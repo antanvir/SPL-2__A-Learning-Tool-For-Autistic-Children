@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
                 #auth_plugin='mysql_native_password'
                 )
         myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT imagePath1,imagePath2,imagePath3,imagePath4 FROM questions"
+        sql = "SELECT imagePath1,imagePath2,imagePath3,imagePath4 FROM questions"   
         myCursor.execute(sql)
         row=myCursor.fetchall()
         for file in row:
