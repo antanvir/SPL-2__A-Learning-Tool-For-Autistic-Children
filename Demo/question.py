@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+#-*- coding: utf8 -*-
 import mysql.connector
 import tkinter as tk
 from tkinter import ttk
@@ -88,13 +89,13 @@ class Ui_MainWindow(object):
             #print(answer)
             if response==answer:
                 print("yes")
-                w = tk.Label(master, text="Correct Answer", font=("Helvetica", 16))        
-                w.pack()
+                w = tk.Label(master, text="Correct Answer", font=("Helvetica", 30))        
+                w.pack(side="top")
                 img = tk.PhotoImage(file='right.png')
                 #label.image = tk.PhotoImage(file='right.png')
                 label=tk.Label(master,image=img)
                 label.image = img 
-                label.pack()
+                label.pack(side = "bottom")
                 sql = "UPDATE questions set result='correct' where qid=1"
                 newcur=mydb.cursor()
                 newcur.execute(sql)
@@ -102,13 +103,13 @@ class Ui_MainWindow(object):
         
             else:
                 print("no")
-                w = tk.Label(master, text="Wrong Answer", font=("Helvetica", 16))        
+                w = tk.Label(master, text="Wrong Answer", font=("Helvetica", 30))        
                 w.pack()
                 img = tk.PhotoImage(file='wrong.png')
                 #label.image = tk.PhotoImage(file='right.png')
                 label=tk.Label(master,image=img)
                 label.image = img 
-                label.pack()
+                label.pack(side = "bottom")
                 sql = "UPDATE questions set result='incorrect' where qid=1"
                 newcur=mydb.cursor()
                 newcur.execute(sql)
@@ -122,10 +123,20 @@ class Ui_MainWindow(object):
         rb= tk.StringVar()
         x = re.split(",|'| ", ifileName)
         print(x[5])
-        w = tk.Label(master, text="Helvetica", font=("Helvetica", 16))        
-        w.pack()
+        test="এটা কি?"
+        #test = test.decode('utf8')
+        print(test)
+        #w = tk.Label(master, text=test, font=("Lohit Bengali", 36))        
+        #w.pack()
         playsound("tee.wav")
         
+
+        #root = Tk()
+        img = tk.PhotoImage(file="qus5.png")
+        panel = tk.Label(master, image = img, width=50, height=180)
+        panel.image=img
+        panel.pack(side = "top", fill = "both", expand = "no")
+
 
         option1 = tk.BooleanVar(value=False)
 
@@ -136,7 +147,7 @@ class Ui_MainWindow(object):
         photo1 = photo1.subsample(8)
         r1=tk.Radiobutton(master, image=photo1, variable = rb,value= "mango",command=change_image)
         
-        r1.pack()
+        r1.pack(side = "left")
         print(rb.get())
 
         photo2 = tk.PhotoImage(file=x[5])
@@ -145,7 +156,7 @@ class Ui_MainWindow(object):
         photo2=photo2.zoom(1)
         photo2 = photo2.subsample(12)
         r2=tk.Radiobutton(master, image=photo2, value="grape" ,variable = rb,command=change_image)
-        r2.pack()
+        r2.pack(side = "right")
 
         photo3 = tk.PhotoImage(file=x[9])
         img = Image.open("grape.png")
@@ -154,7 +165,7 @@ class Ui_MainWindow(object):
         photo3=photo3.zoom(4)
         photo3 = photo3.subsample(8)
         r3=tk.Radiobutton(master, image=photo3, value= "apple" ,variable = rb,command=change_image)
-        r3.pack()
+        r3.pack(side = "left")
 
         photo4 = tk.PhotoImage(file=x[13])
         img = Image.open("banana.png")
@@ -164,7 +175,7 @@ class Ui_MainWindow(object):
         photo4 = photo4.subsample(20)
         r4=tk.Radiobutton(master, image=photo4, value="banana",variable = rb,command=change_image)
       
-        r4.pack()
+        r4.pack(side = "right")
         master.mainloop()
 
 
