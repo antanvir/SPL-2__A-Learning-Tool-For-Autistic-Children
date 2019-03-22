@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
                 #auth_plugin='mysql_native_password'
                 )
         myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT imagePath1,imagePath2,imagePath3,imagePath4 FROM questions"   
+        sql = "SELECT imagePath1,imagePath2,imagePath3,imagePath4 FROM questions"
         myCursor.execute(sql)
         row=myCursor.fetchall()
         for file in row:
@@ -65,11 +65,17 @@ class Ui_MainWindow(object):
         #label.image = immage
         label.pack()
         root.mainloop()'''
-        
+    def toggle_geom(self,event):
+        geom=self.master.winfo_geometry()
+        print(geom,self._geom)
+        self.master.geometry(self._geom)
+        self._geom=geom    
 
 
     def buttons(self,ifileName):
+        
         def change_image():
+            global select
             response=rb.get()
             mydb = mysql.connector.connect(
                 host = 'localhost',
@@ -86,39 +92,51 @@ class Ui_MainWindow(object):
             for file in row:
                 #print(file)
                 answer=str(file)
-            #print(answer)
-            if response==answer:
-                print("yes")
-                w = tk.Label(master, text="Correct Answer", font=("Helvetica", 30))        
-                w.pack(side="top")
-                img = tk.PhotoImage(file='right.png')
-                #label.image = tk.PhotoImage(file='right.png')
-                label=tk.Label(master,image=img)
-                label.image = img 
-                label.pack(side = "bottom")
-                sql = "UPDATE questions set result='correct' where qid=1"
-                newcur=mydb.cursor()
-                newcur.execute(sql)
-                mydb.commit()
+            print(select)
+
+            if select==False:
+                if response==answer:
+                    print("yes")
+                    w = tk.Label(master, text="Correct Answer", font=("Helvetica", 30))        
+                    w.pack(side="top")
+                    img = tk.PhotoImage(file='right.png')
+                    #label.image = tk.PhotoImage(file='right.png')
+                    select=True
+                    label=tk.Label(master,image=img)
+                    label.image = img 
+                    label.pack(side = "bottom")
+                    sql = "UPDATE questions set result='correct' where qid=1"
+                    newcur=mydb.cursor()
+                    newcur.execute(sql)
+                    mydb.commit()
         
-            else:
-                print("no")
-                w = tk.Label(master, text="Wrong Answer", font=("Helvetica", 30))        
-                w.pack()
-                img = tk.PhotoImage(file='wrong.png')
-                #label.image = tk.PhotoImage(file='right.png')
-                label=tk.Label(master,image=img)
-                label.image = img 
-                label.pack(side = "bottom")
-                sql = "UPDATE questions set result='incorrect' where qid=1"
-                newcur=mydb.cursor()
-                newcur.execute(sql)
-                mydb.commit()
-            myCursor.close()
-            mydb.close()
+                else:
+                    print("no")
+                    w = tk.Label(master, text="Wrong Answer", font=("Helvetica", 30))        
+                    w.pack(side="top")
+                    img = tk.PhotoImage(file='wrong.png')
+                    #label.image = tk.PhotoImage(file='right.png')
+                    label=tk.Label(master,image=img)
+                    label.image = img 
+                    label.pack(side = "bottom")
+                    select=True
+                    sql = "UPDATE questions set result='incorrect' where qid=1"
+                    newcur=mydb.cursor()
+                    newcur.execute(sql)
+                    mydb.commit()
+                myCursor.close()
+                mydb.close()
             
         master = tk.Tk()
-        #master.geometry("400x400")
+        master.overrideredirect(False)
+        #master.configure(background="#19476a")
+        #master.attributes("-fullscreen", True)
+        width_value=master.winfo_screenwidth()
+        height_value=master.winfo_screenheight()
+        #master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
+        #master.bind('<Escape>',self.toggle_geom)            
+   
+        master.geometry(("%dx%d+0+0")%(width_value, height_value))
         
         rb= tk.StringVar()
         x = re.split(",|'| ", ifileName)
@@ -179,8 +197,10 @@ class Ui_MainWindow(object):
         master.mainloop()
 
 
+
 if __name__ == "__main__":
     import sys
+    select=False
     Ui_MainWindow().setDB()
     '''app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
