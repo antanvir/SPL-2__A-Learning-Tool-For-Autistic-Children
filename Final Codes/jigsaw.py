@@ -16,6 +16,8 @@ class JigsawPuzzle():
 
 
 	pygame.init()
+	start_time = pygame.time.get_ticks()
+
 	
 	deviceDisplay = pygame.display.Info()
 	#display = pygame.display.set_mode(DISPLAY_SIZE, pygame.RESIZABLE)
@@ -110,15 +112,7 @@ class JigsawPuzzle():
 					(5.2*deviceDisplay.current_w/8-BLANK_TILE2[2], deviceDisplay.current_h-IMAGE1_TILE[3]))
 	screen_down = Rect((0, BLANK_TILE4[3]),
 					(5.2*deviceDisplay.current_w/8 , deviceDisplay.current_h-BLANK_TILE4[3]))
-
-
-	timer = 0
-	pygame.font.init()
-	gameFont = pygame.font.Font('freesansbold.ttf', 25)
-	timerText = gameFont.render('Timer : ' + str(timer), False, FONT_COLOR)
-	display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
-
-	pygame.display.flip()
+	timer_screen = Rect((5.8*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap), (width, TILE_HEIGHT))
 
 	left_button_pressed = False
 	mouse_dragged = False
@@ -126,14 +120,39 @@ class JigsawPuzzle():
 	image1_dragged, image2_dragged, image3_dragged, image4_dragged = False, False, False, False
 	image1_placed, image2_placed, image3_placed, image4_placed = False, False, False, False
 
+	timer = "00:00:00"
+	pygame.font.init()
+	gameFont = pygame.font.Font('freesansbold.ttf', 25)
+	timerText = gameFont.render('Timer : ' + str(timer), False, FONT_COLOR)
+	display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
+
+	pygame.display.flip()
+
 	clock = pygame.time.Clock()
 
 	while True:
-		#clock.tick(70)
-		seconds = pygame. time.get_ticks()//1000.0
-		timer += seconds
-		displayTimer = math.trunc(timer)
-		#print(displayTimer)
+		clock.tick(60)
+		
+		cur_time = pygame. time.get_ticks()
+		#global start_time
+		times = cur_time - start_time
+		#global timer
+		times = times%1000
+		#print("timer: ", timer, "seconds: ", seconds)
+		#timer += (seconds)
+		hours = times / 3600
+
+		times = times%3600
+		minutes = times / 60
+		times %= 60
+		seconds = times 
+
+		#displayTimer = math.trunc(seconds)
+		displayTimer = '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
+
+
+		display.fill(CUSTOM_DISPLAY, timer_screen)
+
 		timerText = gameFont.render('Timer : ' + str(displayTimer), False, FONT_COLOR)
 		display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
 		#pygame.display.update()
@@ -287,3 +306,4 @@ class JigsawPuzzle():
 
 if __name__ == "__main__":
 	jigsaw = JigsawPuzzle()
+
