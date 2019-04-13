@@ -1,3 +1,17 @@
+'''
+### THINGS TO DO ###
+
+If NEXT button pressed & 'this' obj images run out:
+	If 'this' obj already learned (i.e. question answered)
+		it will load the next obj image
+	Otherwise,
+		it will load Question Window
+
+Code for SKIP functionality 
+
+'''
+
+
 import sys
 from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
@@ -24,6 +38,7 @@ class App(QWidget):
     img2 = None
     img3 = None
     img = list()
+    alreadyLearned = list()
 
     def __init__(self):
         super().__init__()
@@ -130,7 +145,7 @@ class App(QWidget):
         '''self.pixmap = QPixmap(
 			'C:/Users/dell/Downloads/Python-master/Python-master/ImageShow/mango.jpg')
 		'''
-        self.pixmap = QPixmap(img[0])
+        self.pixmap = QPixmap(App.img[0])
         self.label.setPixmap(self.pixmap)
         self.label.setGeometry(50, 30, 550, 400)
         # self.resize(pixmap.width(),pixmap.height())
@@ -239,64 +254,64 @@ class App(QWidget):
         myCursor = mydb.cursor()
         # global curFileId
         if (App.curFileId - 1) < 1:
-            self.buttonP.hide()
+        	if App.ObjectID - 1 < 1:
+        		self.buttonP.hide()
+        	else:
+	        	sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
+		        val = (App.ObjectID - 1,)
+		        myCursor.execute(sql, val)
+		        myresult = myCursor.fetchone()
+		        myCursor.close()
+        		mydb.close()
+		        #App.img1, App.img2, App.img3 = myresult[0], myresult[1], myresult[2]
+		        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
+
+		        App.ObjectID -= 1
+		        App.curFileId = 1
+		        self.showImage(App.img[App.curFileId - 1])
+        	#self.buttonP.hide()
         else:
             self.buttonN.show()
-            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s",(App.curFileId-1))
-            sql = "SELECT Path FROM ImagePath where Image_ID = %s"
-            val = (App.curFileId - 1,)
-            myCursor.execute(sql, val)
-            result = myCursor.fetchone()
-            for record in result:
-                print(record)
-                #file = record
-                self.showImage(record)
-                # global curFileId
-                App.curFileId -= 1
-        myCursor.close()
-        mydb.close()
+            App.curFileId -= 1
+            self.showImage(App.img[App.curFileId - 1])
+            
 
     def on_click_next(self):
         # print("in next click")
-        '''
-        mydb = mysql.connector.connect(
-                        host='localhost',
-                        user="root",
-                        # passwd="",
-                        database="spl"
-                        # auth_plugin='mysql_native_password'
-        )
-        myCursor = mydb.cursor(buffered=True)
-
-        #total = myCursor.rowcount
-
-        #global curFileId
-        '''
         #print(" total: ", total, " curFileId: ", App.curFileId)
         if (App.curFileId + 1) > App.total:
-            self.buttonN.hide()
-            self.showQuestionWindow()
-            print("Question window called")
+        	mydb = mysql.connector.connect(
+	            host='localhost',
+	            user="root",
+	            # passwd="",
+	            database="spl"
+	            # auth_plugin='mysql_native_password'
+        	)
+	        myCursor = mydb.cursor()
+	        sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
+	        val = (App.ObjectID + 1,)
+	        myCursor.execute(sql, val)
+	        myresult = myCursor.fetchone()
+	        myCursor.close()
+	        mydb.close()
+	        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
+
+        	App.curFileId = 1
+        	App.ObjectID += 1
+
+        	if App.ObjectID in App.alreadyLearned:
+        		self.showImage(App.img[App.curFileId - 1])
+        		#self.buttonN.hide()
+        	else:
+	        	self.showQuestionWindow()
+	        	print("Question window called")
+	        	App.alreadyLearned.append(App.ObjectID)
+	        	self.showImage(App.img[App.curFileId - 1])
         else:
             self.buttonP.show()
             App.curFileId += 1
-            self.showImage(img[App.curFileId - 1])
-            #global curFileId
-            #myCursor.execute("SELECT Path FROM ImagePath where Image_ID = %s", (App.curFileId+1))
-            '''
-			sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
-			val = (App.ObjectID,)
-			myCursor.execute(sql, val)
-			myresult = myCursor.fetchone()
-
-			for data in myresult:
-				print(data)
-				#file = record
-				self.showImage(data)
-				#global curFileId
-				App.curFileId += 1
-		myCursor.close()
-		mydb.close()'''
+            self.showImage(App.img[App.curFileId - 1])
+            
 
     def on_click_skip(self):
         "WILL BE WRITTEN"
