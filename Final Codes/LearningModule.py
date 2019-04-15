@@ -323,19 +323,19 @@ class App(QWidget):
             database="spl"
             # auth_plugin='mysql_native_password'
         )
-        myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT Path FROM ImagePath where Image_ID = %s"
-        val = (App.curFileId + 1,)
+        myCursor = mydb.cursor()
+        sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
+        val = (App.ObjectID + 1,)
         myCursor.execute(sql, val)
         myresult = myCursor.fetchone()
-        for data in myresult:
-            print(data)
-            #file = record
-            self.showImage(data)
-            #global curFileId
-            App.curFileId += 1
         myCursor.close()
         mydb.close()
+        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
+
+        App.curFileId = 1
+        App.ObjectID += 1
+        self.showImage(App.img[App.curFileId - 1])
+
 
     def showQuestionWindow(self):
         self.QuesWindow = QtWidgets.QMainWindow()
