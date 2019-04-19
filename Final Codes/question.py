@@ -40,8 +40,8 @@ class Ui_MainWindow(object):
     def setDB(self):
         nameList=list()
         imageList=list()
-        qus_nam
-        audio_nam
+        qus_nam=""
+        audio_nam=""
         global object_id
         a=datetime.datetime.now().replace(microsecond=0)
         mydb = mysql.connector.connect(
@@ -51,31 +51,32 @@ class Ui_MainWindow(object):
                 database = "spl"
                 #auth_plugin='mysql_native_password'
                 )
-        myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT imagePath1,imagePath2,imagePath3,imagePath4, image_name1,image_name2,image_name3,image_name4,qus_name,\
-qus_audio FROM questions where qid=1"
+        myCursor = mydb.cursor()
+        sql = "SELECT qus_name,qus_audio,image_name1,image_name2,image_name3,image_name4,imagePath1,imagePath2,imagePath3,imagePath4\
+ FROM questions where qid=1"
         #val=(object_id,)
-        row=myCursor.fetchone()
         myCursor.execute(sql)
+        row=myCursor.fetchone()
+        print(row)
+        nameList.append(row[2])
+        nameList.append(row[3])
         nameList.append(row[4])
         nameList.append(row[5])
-        nameList.append(row[6])
-        nameList.append(row[7])
 
-        imageList.append(row[0])
-        imageList.append(row[1])
-        imageList.append(row[2])
-        imageList.append(row[3])
+        imageList.append(row[6])
+        imageList.append(row[7])
+        imageList.append(row[8])
+        imageList.append(row[9])
 
-        qus_nam=row[8]
-        audio_nam=row[9]
+        qus_nam=row[0]
+        audio_nam=row[1]
         QSound.play(audio_nam)
         for file in row:
             #print(file)
             ifileName=str(file)
             #print("lol"+ifileName)
             if ifileName:
-                self.buttons(ifileName,a,nameList, imageList)
+                self.buttons(ifileName,a,nameList, imageList,qus_nam)
     
 
     def displayAnswer(self, fileName):
@@ -107,7 +108,7 @@ qus_audio FROM questions where qid=1"
                 database = "spl"
                 #auth_plugin='mysql_native_password'
                 )
-            myCursor = mydb.cursor(buffered=True)
+            myCursor = mydb.cursor()
             sql = "SELECT answer FROM questions"
             myCursor.execute(sql)
             row=myCursor.fetchone()
@@ -168,7 +169,7 @@ qus_audio FROM questions where qid=1"
         
         rb= tk.StringVar()
         x = re.split(",|'| ", ifileName)
-        print(x[5])
+        #print(x[5])
         test="এটা কি?"
         #test = test.decode('utf8')
         print(test)
@@ -187,38 +188,38 @@ qus_audio FROM questions where qid=1"
         option1 = tk.BooleanVar(value=False)
         
         
-        photo1 = tk.PhotoImage(file=x[1])
+        photo1 = tk.PhotoImage(file=imageList[0])
         img = Image.open(imageList[0])
         width, height = img.size
-        photo1=photo1.zoom(3)
-        photo1 = photo1.subsample(8)
+        photo1=photo1.zoom(1)
+        photo1 = photo1.subsample(4)
         r1=tk.Radiobutton(master, image=photo1, variable = rb,value= nameList[0],command=change_image)
         
         r1.pack(side = "left")
         print(rb.get())
 
-        photo2 = tk.PhotoImage(file=x[5])
+        photo2 = tk.PhotoImage(file=imageList[1])
         img = Image.open(imageList[1])
         width, height = img.size
         photo2=photo2.zoom(1)
-        photo2 = photo2.subsample(12)
+        photo2 = photo2.subsample(4)
         r2=tk.Radiobutton(master, image=photo2, value=nameList[1] ,variable = rb,command=change_image)
         r2.pack(side = "right")
 
-        photo3 = tk.PhotoImage(file=x[9])
+        photo3 = tk.PhotoImage(file=imageList[2])
         img = Image.open(imageList[2])
         width, height = img.size
 
-        photo3=photo3.zoom(4)
-        photo3 = photo3.subsample(8)
+        photo3=photo3.zoom(1)
+        photo3 = photo3.subsample(4)
         r3=tk.Radiobutton(master, image=photo3, value=nameList[2],variable = rb,command=change_image)
         r3.pack(side = "left")
-        photo4 = tk.PhotoImage(file=x[13])
+        photo4 = tk.PhotoImage(file=imageList[3])
         img = Image.open(imageList[3])
         width, height = img.size
 
         photo4=photo4.zoom(1)
-        photo4 = photo4.subsample(20)
+        photo4 = photo4.subsample(4)
         r4=tk.Radiobutton(master, image=photo4, value=nameList[3],variable = rb,command=change_image)
       
         r4.pack(side = "right")
