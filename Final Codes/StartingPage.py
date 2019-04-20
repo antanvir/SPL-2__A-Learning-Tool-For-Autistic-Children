@@ -1,8 +1,12 @@
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow, QPushButton
+#from JigsawPuzzle import JigsawPuzzle as jp
+from LearningModule import LearningModule
+from JigsawPuzzle import JigsawPuzzle
+from UserDevelopment import UserDevelopment
 
 
 class StartingPage(QWidget):
@@ -33,6 +37,7 @@ class StartingPage(QWidget):
         self.btn1.move(350, 100)
         self.btn1.setStyleSheet("background-color: white; font-weight: bold;")
         self.btn1.clicked.connect(self.btn_1_clicked)
+
         # layout.addWidget(self.btn1)
         # layout.addStretch()
 
@@ -66,32 +71,29 @@ class StartingPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setStyleSheet("background-color: lightgray;")
         '''
-        self.show()
+        # self.show()
         # self.setWindowTitle("WelcomeS")
 
     def btn_1_clicked(self):
-        if self.btn1.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
+        self.learn = LearningModule()
+        self.learn.show()
+
 
     def btn_2_clicked(self):
-        if self.btn2.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
+
+        self.game = JigsawPuzzle()
+        self.game.initGame()
+       
 
     def btn_3_clicked(self):
-        if self.btn3.isChecked():
-            print("button pressed")
-        else:
-            print("button released")
+        self.dev = UserDevelopment()
+        self.dev.show()
 
 
 def main():
     app = QApplication(sys.argv)
     obj = StartingPage()
-    #obj.show()
+    obj.show()
     sys.exit(app.exec_())
 
 
