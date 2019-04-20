@@ -343,6 +343,10 @@ class LearningModule(QWidget):
 
                 App.alreadyLearned.append(App.ObjectID)
                 self.showImage(App.img[App.curFileId - 1])
+                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+                self.playButton.setEnabled(True)
+
+                self.showObjectNameImage(App.objNameImg)
         else:
             self.buttonP.show()
             App.curFileId += 1
