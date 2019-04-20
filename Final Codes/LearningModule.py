@@ -2,12 +2,12 @@
 ### THINGS TO DO ###
 
 If NEXT button pressed & 'this' obj images run out:
-	If 'this' obj already learned (i.e. question answered)
-		it will load the next obj image
-	Otherwise,
-		it will load Question Window
+    If 'this' obj already learned (i.e. question answered)
+        it will load the next obj image
+    Otherwise,
+        it will load Question Window
 
-Code for SKIP functionality 
+Code for SKIP functionality
 
 '''
 
@@ -25,11 +25,11 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage, QImageReader
 from PyQt5.QtWidgets import QVBoxLayout
 import mysql.connector
 from PyQt5.QtMultimedia import QSound
-from qus2 import Ui_MainWindow
-#from PyQt5.QtCore import pyqtSlot
+# from qus2 import Ui_MainWindow
+# from PyQt5.QtCore import pyqtSlot
 
 
-class App(QWidget):
+class LearningModule(QWidget):
 
     curFileId = 1
     ObjectID = 1
@@ -59,7 +59,7 @@ class App(QWidget):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
         videoWidget = QVideoWidget()
-        #videoWidget.setStyleSheet("background-color: black;")
+        # videoWidget.setStyleSheet("background-color: black;")
 
         self.playButton = QPushButton()
         self.playButton.setEnabled(False)
@@ -85,10 +85,10 @@ class App(QWidget):
         wid.setStyleSheet("background-color: lightgray;")
         # wid.setCentralWidget(wid)
         '''
-		player = QMainWindow()
-		wid = QWidget(self)
-		player.setCentralWidget(wid)
-		'''
+        player = QMainWindow()
+        wid = QWidget(self)
+        player.setCentralWidget(wid)
+        '''
         # Create layouts to place inside widget
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(0, 0, 0, 0)
@@ -99,7 +99,7 @@ class App(QWidget):
         layout.addWidget(videoWidget)
         layout.addLayout(controlLayout)
         layout.addWidget(self.errorLabel)
-        #layout.setStyleSheet("background-color: black;")
+        # layout.setStyleSheet("background-color: black;")
 
         # Set widget to contain window contents
         # mainlayout.setLayout(layout)
@@ -112,9 +112,9 @@ class App(QWidget):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
         wid.show()
-    # =====================================================================================#
-
-    # Image  widget
+        # =====================================================================================#
+        '''
+        # Image  widget
         mydb = mysql.connector.connect(
             host='localhost',
             user="root",
@@ -127,49 +127,41 @@ class App(QWidget):
         val = (App.ObjectID,)
         myCursor.execute(sql, val)
         myresult = myCursor.fetchone()
-        #App.img1, App.img2, App.img3 = myresult[0], myresult[1], myresult[2]
+        # App.img1, App.img2, App.img3 = myresult[0], myresult[1], myresult[2]
         App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
-        '''
-		for data in myresult:
-			print(data)
-			#file = record
-			#global curFileId
-			self.showImage(data)
-			App.curFileId += 1
-		'''
+
 
         myCursor.close()
         mydb.close()
 
         self.label = QLabel(self)
-        '''self.pixmap = QPixmap(
-			'C:/Users/dell/Downloads/Python-master/Python-master/ImageShow/mango.jpg')
-		'''
+
+        # self.pixmap = QPixmap('C:/Users/dell/Downloads/Python-master/Python-master/ImageShow/mango.jpg')
         self.pixmap = QPixmap(App.img[0])
         self.label.setPixmap(self.pixmap)
         self.label.setGeometry(50, 30, 550, 400)
         # self.resize(pixmap.width(),pixmap.height())
         # self.resize(640,450)
-
-    # audio button widget
+        '''
+        # audio button widget
         self.pushButton = QPushButton('Play Audio', self)
         self.pushButton.setToolTip('play audio')
         self.pushButton.setGeometry(100, 550, 375, 28)
         self.pushButton.clicked.connect(self.play_audio)
 
-    # Previous button widget
+        # Previous button widget
         self.buttonP = QPushButton('PREVIOUS', self)
         self.buttonP.setToolTip('Go to previous picture')
         self.buttonP.move(100, 500)
         self.buttonP.clicked.connect(self.on_click_prev)
 
-    # Skip button widget
-        self.buttonP = QPushButton('SKIP OBJECT', self)
-        self.buttonP.setToolTip('Skip this object')
-        self.buttonP.move(300, 500)
-        self.buttonP.clicked.connect(self.on_click_skip)
+        # Skip button widget
+        self.buttonS = QPushButton('SKIP OBJECT', self)
+        self.buttonS.setToolTip('Skip this object')
+        self.buttonS.move(300, 500)
+        self.buttonS.clicked.connect(self.on_click_skip)
 
-    # Next button widget
+        # Next button widget
         self.buttonN = QPushButton('NEXT', self)
         self.buttonN.setToolTip('Go to next picture')
         self.buttonN.move(500, 500)
@@ -254,68 +246,66 @@ class App(QWidget):
         myCursor = mydb.cursor()
         # global curFileId
         if (App.curFileId - 1) < 1:
-        	if App.ObjectID - 1 < 1:
-        		self.buttonP.hide()
-        	else:
-	        	sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
-		        val = (App.ObjectID - 1,)
-		        myCursor.execute(sql, val)
-		        myresult = myCursor.fetchone()
-		        myCursor.close()
-        		mydb.close()
-		        #App.img1, App.img2, App.img3 = myresult[0], myresult[1], myresult[2]
-		        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
+            if App.ObjectID - 1 < 1:
+                self.buttonP.hide()
+            else:
+                sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
+                val = (App.ObjectID - 1,)
+                myCursor.execute(sql, val)
+                myresult = myCursor.fetchone()
+                myCursor.close()
+                mydb.close()
+                # App.img1, App.img2, App.img3 = myresult[0], myresult[1], myresult[2]
+                App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
 
-		        App.ObjectID -= 1
-		        App.curFileId = 1
-		        self.showImage(App.img[App.curFileId - 1])
-        	#self.buttonP.hide()
+                App.ObjectID -= 1
+                App.curFileId = 1
+                self.showImage(App.img[App.curFileId - 1])
+            # self.buttonP.hide()
         else:
             self.buttonN.show()
             App.curFileId -= 1
             self.showImage(App.img[App.curFileId - 1])
-            
 
     def on_click_next(self):
         # print("in next click")
-        #print(" total: ", total, " curFileId: ", App.curFileId)
+        # print(" total: ", total, " curFileId: ", App.curFileId)
         if (App.curFileId + 1) > App.total:
-        	mydb = mysql.connector.connect(
-	            host='localhost',
-	            user="root",
-	            # passwd="",
-	            database="spl"
-	            # auth_plugin='mysql_native_password'
-        	)
-	        myCursor = mydb.cursor()
-	        sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
-	        val = (App.ObjectID + 1,)
-	        myCursor.execute(sql, val)
-	        myresult = myCursor.fetchone()
-	        myCursor.close()
-	        mydb.close()
-	        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
+            mydb = mysql.connector.connect(
+                host='localhost',
+                user="root",
+                # passwd="",
+                database="spl"
+                # auth_plugin='mysql_native_password'
+            )
+            myCursor = mydb.cursor()
+            sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
+            val = (App.ObjectID + 1,)
+            myCursor.execute(sql, val)
+            myresult = myCursor.fetchone()
+            myCursor.close()
+            mydb.close()
+            App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
 
-        	App.curFileId = 1
-        	App.ObjectID += 1
+            App.curFileId = 1
+            App.ObjectID += 1
 
-        	if App.ObjectID in App.alreadyLearned:
-        		self.showImage(App.img[App.curFileId - 1])
-        		#self.buttonN.hide()
-        	else:
-	        	self.showQuestionWindow()
-	        	print("Question window called")
-	        	App.alreadyLearned.append(App.ObjectID)
-	        	self.showImage(App.img[App.curFileId - 1])
+            if App.ObjectID in App.alreadyLearned:
+                self.showImage(App.img[App.curFileId - 1])
+                # self.buttonN.hide()
+            else:
+                self.showQuestionWindow()
+                print("Question window called")
+                App.alreadyLearned.append(App.ObjectID)
+                self.showImage(App.img[App.curFileId - 1])
         else:
             self.buttonP.show()
             App.curFileId += 1
             self.showImage(App.img[App.curFileId - 1])
-            
 
     def on_click_skip(self):
         "WILL BE WRITTEN"
-        #print("in skip click")
+        # print("in skip click")
         mydb = mysql.connector.connect(
             host='localhost',
             user="root",
@@ -323,19 +313,19 @@ class App(QWidget):
             database="spl"
             # auth_plugin='mysql_native_password'
         )
-        myCursor = mydb.cursor()
-        sql = "SELECT image_name_1, image_name_2, image_name_3 FROM object where object_id = %s"
-        val = (App.ObjectID + 1,)
+        myCursor = mydb.cursor(buffered=True)
+        sql = "SELECT Path FROM ImagePath where Image_ID = %s"
+        val = (App.curFileId + 1,)
         myCursor.execute(sql, val)
         myresult = myCursor.fetchone()
+        for data in myresult:
+            print(data)
+            # file = record
+            self.showImage(data)
+            # global curFileId
+            App.curFileId += 1
         myCursor.close()
         mydb.close()
-        App.img[0], App.img[1], App.img[2] = myresult[0], myresult[1], myresult[2]
-
-        App.curFileId = 1
-        App.ObjectID += 1
-        self.showImage(App.img[App.curFileId - 1])
-
 
     def showQuestionWindow(self):
         self.QuesWindow = QtWidgets.QMainWindow()
@@ -346,5 +336,5 @@ class App(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    obj = App()
+    obj = LearningModule()
     sys.exit(app.exec_())

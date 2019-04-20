@@ -11,7 +11,9 @@ class JigsawPuzzle():
 
     def initGame(self):
         pygame.init()
-        
+        #start_time = pygame.time.get_ticks()
+        start_time = int(time.time()*1000.0)
+
         deviceDisplay = pygame.display.Info()
         #display = pygame.display.set_mode(DISPLAY_SIZE, pygame.RESIZABLE)
         #display = pygame.display.set_mode((0,0), pygame.RESIZABLE)
@@ -106,11 +108,12 @@ class JigsawPuzzle():
         screen_down = Rect((0, BLANK_TILE4[3]),
                         (5.2*deviceDisplay.current_w/8 , deviceDisplay.current_h-BLANK_TILE4[3]))
 
-
+        timer_screen = Rect((5.8*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap), (width, TILE_HEIGHT))
         timer = 0
+
         pygame.font.init()
-        gameFont = pygame.font.Font('freesansbold.ttf', 25)
-        timerText = gameFont.render('Timer : ' + str(timer), False, FONT_COLOR)
+        gameFont = pygame.font.SysFont('times new roman', 25, True)
+        timerText = gameFont.render('TIMER : ' + str(timer), False, FONT_COLOR)
         display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
 
         pygame.display.flip()
@@ -129,47 +132,58 @@ class JigsawPuzzle():
             if isQuit:
                 break
             #clock.tick(70)
-            seconds = pygame. time.get_ticks()//1000.0
-            timer += seconds
-            displayTimer = math.trunc(timer)
-            #print(displayTimer)
-            timerText = gameFont.render('Timer : ' + str(displayTimer), False, FONT_COLOR)
+            clock.tick(60)
+        
+            #cur_time = pygame. time.get_ticks()
+            cur_time = int(time.time()*1000.0)
+            #global start_time
+            times = cur_time - start_time
+            #global timer
+            times = times%1000
+            #print("timer: ", timer, "seconds: ", seconds)
+            #timer += (seconds)
+            hours = times / 3600
+
+            times = times%3600
+            minutes = times / 60
+            times %= 60
+            seconds = times 
+
+            #displayTimer = math.trunc(seconds)
+            displayTimer = '{:02d}:{:02d}:{:02d}'.format(int(hours), int(minutes), int(seconds))
+
+
+            display.fill(CUSTOM_DISPLAY, timer_screen)
+
+            timerText = gameFont.render('TIMER : ' + str(displayTimer), False, FONT_COLOR)
             display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
             #pygame.display.update()
-            '''
-            if pygame.event.get(pygame.QUIT): # only check for QUIT event
-                #break
-                #pygame.quit()
-                sys.exit()
-            '''
+
             for event in pygame.event.get():
 
                 if event.type == QUIT:
-                    #exit()
-                    #pygame.exit()
                     pygame.quit()
                     isQuit = True
                     break
-                    #sys.exit()
 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1: 
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.dict['button'] == 1: 
                     left_button_pressed = True
 
                     mouseX, mouseY = pygame.mouse.get_pos()
 
-                    if pointerIsInSurface(mouseX, mouseY, IMAGE1_TILE) and image1_placed == False:
+                    if self.pointerIsInSurface(mouseX, mouseY, IMAGE1_TILE) and image1_placed == False:
                         image1_dragged = True
                         display.blit(black_rect, (IMAGE1_TILE[0], IMAGE1_TILE[1]))
                             
-                    elif pointerIsInSurface(mouseX, mouseY, IMAGE2_TILE) and image2_placed == False:
+                    elif self.pointerIsInSurface(mouseX, mouseY, IMAGE2_TILE) and image2_placed == False:
                             image2_dragged = True
                             display.blit(black_rect, (IMAGE2_TILE[0], IMAGE2_TILE[1]))
 
-                    elif pointerIsInSurface(mouseX, mouseY, IMAGE3_TILE) and image3_placed == False:
+                    elif self.pointerIsInSurface(mouseX, mouseY, IMAGE3_TILE) and image3_placed == False:
                             image3_dragged = True
                             display.blit(black_rect, (IMAGE3_TILE[0], IMAGE3_TILE[1]))
 
-                    elif pointerIsInSurface(mouseX, mouseY, IMAGE4_TILE) and image4_placed == False:
+                    elif self.pointerIsInSurface(mouseX, mouseY, IMAGE4_TILE) and image4_placed == False:
                             image4_dragged = True
                             display.blit(black_rect, (IMAGE4_TILE[0], IMAGE4_TILE[1]))
 
@@ -199,22 +213,22 @@ class JigsawPuzzle():
                             image4_dragged = False
 
                     else:
-                        if pointerIsInSurface(mouseX, mouseY, BLANK_TILE1):
+                        if self.pointerIsInSurface(mouseX, mouseY, BLANK_TILE1):
                             if image1_dragged:
                                 display.blit(image1, (BLANK_TILE1[0], BLANK_TILE1[1]))
                                 image1_placed = True
 
-                        elif pointerIsInSurface(mouseX, mouseY, BLANK_TILE2):
+                        elif self.pointerIsInSurface(mouseX, mouseY, BLANK_TILE2):
                             if image2_dragged:
                                 display.blit(image2, (BLANK_TILE2[0], BLANK_TILE2[1]))
                                 image2_placed = True
 
-                        elif pointerIsInSurface(mouseX, mouseY, BLANK_TILE3):
+                        elif self.pointerIsInSurface(mouseX, mouseY, BLANK_TILE3):
                             if image3_dragged:
                                 display.blit(image3, (BLANK_TILE3[0], BLANK_TILE3[1]))
                                 image3_placed = True
 
-                        elif pointerIsInSurface(mouseX, mouseY, BLANK_TILE4):
+                        elif self.pointerIsInSurface(mouseX, mouseY, BLANK_TILE4):
                             if image4_dragged:
                                 display.blit(image4, (BLANK_TILE4[0], BLANK_TILE4[1]))
                                 image4_placed = True
@@ -294,7 +308,7 @@ class JigsawPuzzle():
                     display.blit(silver_rect, (BLANK_TILE4[0], BLANK_TILE4[1]))
 
 
-    def pointerIsInSurface(mouseX, mouseY, TILE):
+    def pointerIsInSurface(self, mouseX, mouseY, TILE):
         if (TILE[0] <= mouseX <= TILE[2]) and (TILE[1] <= mouseY <= TILE[3]):
             return True
         return False
