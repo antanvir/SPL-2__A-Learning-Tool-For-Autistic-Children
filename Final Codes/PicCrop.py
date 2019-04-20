@@ -13,11 +13,11 @@ def crop(im, height, width):
             yield im.crop(box)
 
 
-if __name__ == '__main__':  
-
-    im = Image.open("mango.jpg")
+if __name__ == '__main__':
+												
+    im = Image.open("mango.jpg")						# Manually Change
     imgwidth, imgheight = im.size
-    print ('Image size is: %d x %d ' % (imgwidth, imgheight))
+    print('Image size is: %d x %d ' % (imgwidth, imgheight))
     height = int(imgheight / 2) + 1
     width = int(imgwidth / 2) + 1
     start_num = 0
@@ -26,6 +26,6 @@ if __name__ == '__main__':
         #print('K: ', k, '\tpiece: ', piece)
         img = Image.new('RGB', (width, height), 255)
         img.paste(piece)
-        path = os.path.join("IMG-%d.jpg" % int(k + 1))
+        path = os.path.join("OBJ-%dIMG-%d.jpg" %(ObjNo, int(k + 1)))       # Manually Change
         img.save(path)
         #os.rename(path, os.path.join("cam%d.1%05d" %(int(k + 1), filenum)))

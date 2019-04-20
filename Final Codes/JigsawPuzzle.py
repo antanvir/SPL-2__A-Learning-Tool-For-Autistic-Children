@@ -9,9 +9,31 @@ from pygame.locals import *
 class JigsawPuzzle():
 
 	def initGame(self):
+		mainImagePath, part1_path, part2_path, part3_path, part4_path = None, None, None, None
+		'''
+		mydb = mysql.connector.connect(
+			host='localhost',
+			user="root",
+			# passwd="",
+			database="spl"
+		)
+		myCursor = mydb.cursor(buffered=True)
+		sql = "SELECT mainImage, part1, part2, part3, part4 \
+				FROM game where object_id = %s"
+		val = (App.ObjectID,)
+		myCursor.execute(sql, val)
+		myresult = myCursor.fetchone()
+
+		mainImagePath = myresult[0]
+		part1_path = myresult[1] 
+		part2_path = myresult[2]
+		part3_path = myresult[3]
+		part4_path = myresult[4]
+
+		myCursor.close()
+		mydb.close()
+		'''
 		pygame.init()
-		#start_time = pygame.time.get_ticks()
-		#start_time = int(time.time()*1000.0)
 		start_time = datetime.datetime.now().replace(microsecond = 0)
 
 		deviceDisplay = pygame.display.Info()
@@ -21,7 +43,7 @@ class JigsawPuzzle():
 		pygame.display.set_caption("JIGSAW PUZZLE : MAKING OBJECT FROM PIECES!")
 
 
-		image = pygame.image.load("mango.jpg")
+		image = pygame.image.load("mango.jpg")				# mainImagePath
 		width, height = image.get_size()
 
 		IMAGE_SIZE = (width, height)
@@ -62,14 +84,10 @@ class JigsawPuzzle():
 		ver_divider.fill(SILVER)
 		
 
-		image1 = pygame.image.load("IMG-0.jpg")
-		image2 = pygame.image.load("IMG-1.jpg")
-		image3 = pygame.image.load("IMG-2.jpg")
-
-
-
-
-		image4 = pygame.image.load("IMG-3.jpg")
+		image1 = pygame.image.load("IMG-0.jpg")			# part1_path
+		image2 = pygame.image.load("IMG-1.jpg")			# part2_path
+		image3 = pygame.image.load("IMG-2.jpg")			# part3_path
+		image4 = pygame.image.load("IMG-3.jpg")			# part4_path
 
 		# display main picture & main-picture-divider from pieces
 		display.fill(CUSTOM_DISPLAY)
@@ -144,15 +162,7 @@ class JigsawPuzzle():
 			#cur_time = int(time.time()*1000.0)
 			cur_time = datetime.datetime.now().replace(microsecond = 0)
 			times = cur_time - start_time
-			'''
-			times = times%1000
-			hours = times / 3600
-			times = times%3600
-			minutes = times / 60
-			times %= 60
-			seconds = times 
-			displayTimer = '{:02d}:{:02d}:{:02d}'.format(int(hours), int(minutes), int(seconds))
-			'''
+
 			if waitFlag == False:
 				display.fill(CUSTOM_DISPLAY, timer_screen)
 
@@ -291,9 +301,7 @@ class JigsawPuzzle():
 				display.fill(CUSTOM_DISPLAY, screen_right)
 				display.fill(CUSTOM_DISPLAY, screen_down)
 
-				'''display.blit(hor_line, (4*hor_gap + TILE_WIDTH, 2*height + ver_gap + TILE_HEIGHT))
-				display.blit(ver_line, (4*hor_gap + 2*TILE_WIDTH, 2*height + ver_gap))
-				'''
+
 				display.blit(hor_line, (BLANK_TILE1[0], BLANK_TILE1[1]+TILE_HEIGHT))
 				display.blit(ver_line, (BLANK_TILE2[0]-1, BLANK_TILE2[1]-1))
 
@@ -318,16 +326,7 @@ class JigsawPuzzle():
 					display.blit(silver_rect, (BLANK_TILE4[0], BLANK_TILE4[1]))
 
 				if image1_placed and image2_placed and image3_placed and image4_placed and waitFlag == False:
-					'''
-					pygame.display.update()
-					display.fill(CUSTOM_DISPLAY, timer_screen)
-					gameFont = pygame.font.SysFont('arial', 35, True, True)
-					gameOverText = gameFont.render('GAME OVER\nElapsed Time: ' + str(times), False, FONT_COLOR)
-					display.blit(gameOverText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
-					'''
-					#isQuit = True
-					#time.sleep(5)
-					#break
+
 					cur_time = datetime.datetime.now().replace(microsecond = 0)
 					times = cur_time - start_time
 					gameOverTime = str(times)
