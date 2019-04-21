@@ -11,13 +11,13 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage, QImageReader
 from PyQt5.QtWidgets import QVBoxLayout
 import mysql.connector
 from PyQt5.QtMultimedia import QSound
-from question import Ui_MainWindow
+from new_qus import Ui_MainWindow
 
 
 class LearningModule(QWidget):
 
     curFileId = 1
-    ObjectID = 1
+    ObjectID = 3
     total = 3
     img1 = None
     img2 = None
@@ -54,17 +54,19 @@ class LearningModule(QWidget):
         myCursor = mydb.cursor(buffered=True)
         sql = "SELECT image_name_1, image_name_2, image_name_3, \
                object_image, audio_name, video_name FROM object where object_id = %s"
-        val = (App.ObjectID - 1,)
+        val = (LearningModule.ObjectID ,)
         myCursor.execute(sql, val)
         myresult = myCursor.fetchone()
+        LearningModule.img.clear() 
 
-        App.img.append(myresult[0]) 
-        App.img.append(myresult[1])
-        App.img.append(myresult[2])
-        App.objNameImg = myresult[3]
-        App.audio = myresult[4]
-        App.video = myresult[5]
-
+        LearningModule.img.append(myresult[0]) 
+        LearningModule.img.append(myresult[1])
+        LearningModule.img.append(myresult[2])
+        LearningModule.objNameImg = myresult[3]
+        LearningModule.audio = myresult[4]
+        LearningModule.video = myresult[5]
+        print(myresult[4])
+        self.play_audio(LearningModule.audio)
 
         myCursor.close()
         mydb.close()
@@ -90,7 +92,7 @@ class LearningModule(QWidget):
         self.errorLabel = QLabel()
         self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(LearningModule.video)))     # NECESSARY
         self.playButton.setEnabled(True)
 
         # Create a widget for window contents
@@ -125,11 +127,12 @@ class LearningModule(QWidget):
 
         self.imglabel = QLabel(self)
         # self.pixmap = QPixmap('C:/Users/dell/Downloads/Python-master/Python-master/ImageShow/mango.jpg')
-        self.pixmap = QPixmap(App.img[0])
+        print(LearningModule.img[0])
+        self.pixmap = QPixmap(LearningModule.img[0])
         self.imglabel.setPixmap(self.pixmap)
         #self.imglabel.setGeometry(50, 30, 550, 400)
-        pixmap = pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
-        self.imglabel.setAlignment(QtCore.Qt.AlignCenter)
+        #self.pixmap = self.pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
+        #self.imglabel.setAlignment(QtCore.Qt.AlignCenter)
         # self.resize(pixmap.width(),pixmap.height())
         # self.resize(640,450)
         
@@ -138,7 +141,8 @@ class LearningModule(QWidget):
         self.audioButton.setToolTip('play audio')
         self.audioButton.setStyleSheet("background-color: white; font-size: 18px;")
         #self.audioButton.setGeometry(100, 550, 375, 28)
-        self.audioButton.clicked.connect(self.play_audio(App.audio))                # NECESSARY
+        print("dfsfs",str(LearningModule.audio))
+        self.audioButton.clicked.connect(lambda: self.play_audio(LearningModule.audio))                # NECESSARY
 
         # Previous button widget
         self.buttonP = QPushButton('\t PREVIOUS IMAGE \t', self)
@@ -169,7 +173,7 @@ class LearningModule(QWidget):
 
         # OBJECT NAME LABEL
         self.lblObjName = QLabel()
-        self.pixmap = QPixmap(App.objNameImg)
+        self.pixmap = QPixmap(LearningModule.objNameImg)
         self.lblObjName.setPixmap(self.pixmap)
 
         hbox1.addStretch()
@@ -242,19 +246,21 @@ class LearningModule(QWidget):
         self.errorLabel.setText("Error: " + self.mediaPlayer.errorString())
 
     def showImage(self, filepath):
+        print(filepath)
         self.imglabel.clear()
-        pixmap = QtGui.QPixmap(filepath)
-        pixmap = pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
-        self.imglabel.setPixmap(pixmap)
+        self.pixmap = QtGui.QPixmap(filepath)
+        self.pixmap = self.pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
+        self.imglabel.setPixmap(self.pixmap)
         self.imglabel.setAlignment(QtCore.Qt.AlignCenter)
 
 
     def showObjectNameImage(self, filepath):
         self.lblObjName.clear()
-        pixmap = QPixmap(filepath)
+        self.pixmap = QtGui.QPixmap(filepath)
         self.lblObjName.setPixmap(self.pixmap)
 
     def play_audio(self, path):
+        print(path)
         QSound.play(path)
 
 
@@ -267,43 +273,44 @@ class LearningModule(QWidget):
         )
         myCursor = mydb.cursor()
 
-        if (App.curFileId - 1) < 1:
-            if App.ObjectID - 1 < 1:
+        if (LearningModule.curFileId - 1) < 1:
+            if LearningModule.ObjectID - 1 < 1:
                 self.buttonP.hide()
             else:
                 sql = "SELECT image_name_1, image_name_2, image_name_3, \
                         object_image, audio_name, video_name FROM object where object_id = %s"
-                val = (App.ObjectID - 1,)
+                val = (LearningModule.ObjectID - 1,)
 
                 myCursor.execute(sql, val)
                 myresult = myCursor.fetchone()
                 myCursor.close()
                 mydb.close()
+                LearningModule.img.clear() 
 
-                App.img.append(myresult[0]) 
-                App.img.append(myresult[1])
-                App.img.append(myresult[2])
-                App.objNameImg = myresult[3]
-                App.audio = myresult[4]
-                App.video = myresult[5]
+                LearningModule.img.append(myresult[0]) 
+                LearningModule.img.append(myresult[1])
+                LearningModule.img.append(myresult[2])
+                LearningModule.objNameImg = myresult[3]
+                LearningModule.audio = myresult[4]
+                LearningModule.video = myresult[5]
 
 
-                App.ObjectID -= 1
-                App.curFileId = 1
-                self.showImage(App.img[App.curFileId - 1])
+                LearningModule.ObjectID -= 1
+                LearningModule.curFileId = 1
+                self.showImage(LearningModule.img[LearningModule.curFileId - 1])
 
-                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(LearningModule.video)))     # NECESSARY
                 self.playButton.setEnabled(True)
 
-                self.showObjectNameImage(App.objNameImg)
+                self.showObjectNameImage(LearningModule.objNameImg)
             # self.buttonP.hide()
         else:
             self.buttonN.show()
-            App.curFileId -= 1
-            self.showImage(App.img[App.curFileId - 1])
+            LearningModule.curFileId -= 1
+            self.showImage(LearningModule.img[LearningModule.curFileId - 1])
 
     def on_click_next(self):
-        if (App.curFileId + 1) > App.total:
+        if (LearningModule.curFileId + 1) > LearningModule.total:
             mydb = mysql.connector.connect(
                 host='localhost',
                 user="root",
@@ -313,48 +320,49 @@ class LearningModule(QWidget):
             myCursor = mydb.cursor()
             sql = "SELECT image_name_1, image_name_2, image_name_3, \
                         object_image, audio_name, video_name FROM object where object_id = %s"
-            val = (App.ObjectID - 1,)
+            val = (LearningModule.ObjectID - 1,)
 
             myCursor.execute(sql, val)
             myresult = myCursor.fetchone()
             myCursor.close()
             mydb.close()
 
-            App.img.append(myresult[0]) 
-            App.img.append(myresult[1])
-            App.img.append(myresult[2])
-            App.objNameImg = myresult[3]
-            App.audio = myresult[4]
-            App.video = myresult[5]
+            LearningModule.img.clear()            
+            LearningModule.img.append(myresult[0]) 
+            LearningModule.img.append(myresult[1])
+            LearningModule.img.append(myresult[2])
+            LearningModule.objNameImg = myresult[3]
+            LearningModule.audio = myresult[4]
+            LearningModule.video = myresult[5]
 
-            App.curFileId = 1
-            App.ObjectID += 1
+            LearningModule.curFileId = 1
+            LearningModule.ObjectID += 1
 
-            if App.ObjectID in App.alreadyLearned:
-                self.showImage(App.img[App.curFileId - 1])
+            if LearningModule.ObjectID in LearningModule.alreadyLearned:
+                self.showImage(LearningModule.img[LearningModule.curFileId - 1])
 
-                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(LearningModule.video)))     # NECESSARY
                 self.playButton.setEnabled(True)
 
-                self.showObjectNameImage(App.objNameImg)
+                self.showObjectNameImage(LearningModule.objNameImg)
                 # self.buttonN.hide()
             else:
-                self.showQuestionWindow(App.ObjectID - 1)
+                self.showQuestionWindow(LearningModule.ObjectID - 1)
 
-                App.alreadyLearned.append(App.ObjectID)
-                self.showImage(App.img[App.curFileId - 1])
-                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+                LearningModule.alreadyLearned.append(LearningModule.ObjectID)
+                self.showImage(LearningModule.img[LearningModule.curFileId - 1])
+                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(LearningModule.video)))     # NECESSARY
                 self.playButton.setEnabled(True)
 
-                self.showObjectNameImage(App.objNameImg)
+                self.showObjectNameImage(LearningModule.objNameImg)
         else:
             self.buttonP.show()
-            App.curFileId += 1
-            self.showImage(App.img[App.curFileId - 1])
+            LearningModule.curFileId += 1
+            self.showImage(LearningModule.img[LearningModule.curFileId - 1])
 
     def on_click_skip(self):
         mydb = mysql.connector.connect(
-            host='localhost',
+			host='localhost',
             user="root",
             # passwd="",
             database="spl"
@@ -362,30 +370,34 @@ class LearningModule(QWidget):
         myCursor = mydb.cursor(buffered=True)
         sql = "SELECT image_name_1, image_name_2, image_name_3, \
                object_image, audio_name, video_name FROM object where object_id = %s"
-        val = (App.ObjectID - 1,)
+        val = (LearningModule.ObjectID + 1,)
         myCursor.execute(sql, val)
         myresult = myCursor.fetchone()
 
-        App.img.append(myresult[0]) 
-        App.img.append(myresult[1])
-        App.img.append(myresult[2])
-        App.objNameImg = myresult[3]
-        App.audio = myresult[4]
-        App.video = myresult[5]
+        LearningModule.img.clear()
+        LearningModule.img.append(myresult[0]) 
+        LearningModule.img.append(myresult[1])
+        LearningModule.img.append(myresult[2])
+        LearningModule.objNameImg = myresult[3]
+        LearningModule.audio = myresult[4]
+        LearningModule.video = myresult[5]
+        print(myresult)
 
         myCursor.close()
         mydb.close()
 
-        App.curFileId = 1
-        App.ObjectID += 1
-        self.showImage(App.img[App.curFileId - 1])
-        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+        LearningModule.curFileId = 1
+        LearningModule.ObjectID += 1
+        self.showImage(LearningModule.img[LearningModule.curFileId - 1])
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(LearningModule.video)))     # NECESSARY
         self.playButton.setEnabled(True)
+        self.showObjectNameImage(LearningModule.objNameImg)
 
-    def showQuestionWindow(self):
+    def showQuestionWindow(self, objectID):
         self.QuesWindow = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self.QuesWindow)
+        #self.ui.setupUi()
+        self.ui.setDB(objectID)
         self.QuesWindow.show()
 
 
@@ -393,3 +405,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     obj = LearningModule()
     sys.exit(app.exec_())
+
