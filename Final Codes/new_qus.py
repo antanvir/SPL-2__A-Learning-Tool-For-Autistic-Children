@@ -3,6 +3,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 #-*- coding: utf8 -*-
 import datetime
 import time
+import pyaudio 
+import wave 
+from pygame import mixer
 from threading import Timer
 import mysql.connector
 import tkinter as tk
@@ -30,7 +33,7 @@ class Ui_MainWindow(object):
     def __init__(self):
         super().__init__()
 
-        
+        #player.playAudios()
         #self.setDB(object_id)
         
     def setDB(self,object_id):
@@ -77,6 +80,8 @@ class Ui_MainWindow(object):
     
     def buttons(self,a,nameList,imageList,qus_nam,audio_nam,answer,mydb,object_id):
         self.playAudio(audio_nam)
+        #mixer.Sound("m.mp3")
+        
         print(audio_nam)
         def change_image():
             #global select
@@ -123,8 +128,12 @@ class Ui_MainWindow(object):
                     val=('incorrect',c,object_id)
                     newcur=mydb.cursor()
                     newcur.execute(sql,val)
+                    
                     mydb.commit()
                 #myCursor.close()
+                Ui_MainWindow.select=False
+                #print("kkjk")
+                #print(Ui_MainWindow.select)
                 mydb.close()
              
         master = tk.Tk()
@@ -201,17 +210,47 @@ class Ui_MainWindow(object):
 
         
         master.mainloop()
+        
         master.destroy() 
     def playAudio(self,audio_nam):
         #time.sleep(7)
-        #playsound(audio_nam)
-        Timer(10, playsound(audio_nam)).start()
+        #playsound("m.mp3")
+        print("ahjf")
+        '''chunk = 1024
+        f = wave.open(r"/home/anika/Documents/spl/audios/dudh.wav","rb")  
+#instantiate PyAudio  
+        p = pyaudio.PyAudio()  
+#open stream  
+
+        stream = p.open(format = p.get_format_from_width(f.getsampwidth()),  
+                channels = f.getnchannels(),  
+                rate = f.getframerate(),  
+                output = True)  
+#read data  
+        data = f.readframes(chunk)  
+
+#play stream  
+        while data:  
+            stream.write(data)  
+            data = f.readframes(chunk)  
+
+#stop stream  
+        stream.stop_stream()  
+        stream.close()  
+
+#close PyAudio  
+        p.terminate()  '''
+
+
+        #Timer(10, playsound(audio_nam)).start()
+        playsound(audio_nam)
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Ui_MainWindow()
+
     sys.exit(app.exec_())
     '''app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
