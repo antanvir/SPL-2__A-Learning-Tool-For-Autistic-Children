@@ -4,13 +4,15 @@ import sys
 import random
 import math
 import pygame
+import mysql.connector
 from pygame.locals import *
 
 class JigsawPuzzle():
 
-	def initGame(self):
-		mainImagePath, part1_path, part2_path, part3_path, part4_path = None, None, None, None
-		'''
+    
+	def initGame(self,ObjectID):
+		mainImagePath, part1_path, part2_path, part3_path, part4_path = None, None, None, None, None
+		
 		mydb = mysql.connector.connect(
 			host='localhost',
 			user="root",
@@ -18,9 +20,9 @@ class JigsawPuzzle():
 			database="spl"
 		)
 		myCursor = mydb.cursor(buffered=True)
-		sql = "SELECT mainImage, part1, part2, part3, part4 \
-				FROM game where object_id = %s"
-		val = (App.ObjectID,)
+		sql = "SELECT main_image, image_name_1, image_name_2, image_name_3, image_name_4 \
+				FROM game where game_id = %s"
+		val = (ObjectID,)
 		myCursor.execute(sql, val)
 		myresult = myCursor.fetchone()
 
@@ -31,8 +33,8 @@ class JigsawPuzzle():
 		part4_path = myresult[4]
 
 		myCursor.close()
-		mydb.close()
-		'''
+		
+		
 		pygame.init()
 		start_time = datetime.datetime.now().replace(microsecond = 0)
 
@@ -43,7 +45,7 @@ class JigsawPuzzle():
 		pygame.display.set_caption("JIGSAW PUZZLE : MAKING OBJECT FROM PIECES!")
 
 
-		image = pygame.image.load("mango.jpg")				# mainImagePath
+		image = pygame.image.load(mainImagePath)				# mainImagePath
 		width, height = image.get_size()
 
 		IMAGE_SIZE = (width, height)
@@ -84,10 +86,10 @@ class JigsawPuzzle():
 		ver_divider.fill(SILVER)
 		
 
-		image1 = pygame.image.load("IMG-0.jpg")			# part1_path
-		image2 = pygame.image.load("IMG-1.jpg")			# part2_path
-		image3 = pygame.image.load("IMG-2.jpg")			# part3_path
-		image4 = pygame.image.load("IMG-3.jpg")			# part4_path
+		image1 = pygame.image.load(part1_path)			# part1_path
+		image2 = pygame.image.load(part2_path)			# part2_path
+		image3 = pygame.image.load(part3_path)			# part3_path
+		image4 = pygame.image.load(part4_path)			# part4_path
 
 		# display main picture & main-picture-divider from pieces
 		display.fill(CUSTOM_DISPLAY)
@@ -162,6 +164,7 @@ class JigsawPuzzle():
 			#cur_time = int(time.time()*1000.0)
 			cur_time = datetime.datetime.now().replace(microsecond = 0)
 			times = cur_time - start_time
+			
 
 			if waitFlag == False:
 				display.fill(CUSTOM_DISPLAY, timer_screen)
@@ -330,6 +333,15 @@ class JigsawPuzzle():
 					cur_time = datetime.datetime.now().replace(microsecond = 0)
 					times = cur_time - start_time
 					gameOverTime = str(times)
+					print(times)
+					mCursor = mydb.cursor(buffered=True)
+					sql = "update game set elapsedTime=%s where game_id=%s"
+					val = (gameOverTime,ObjectID,)
+					print(ObjectID)
+					mCursor.execute(sql, val)
+					mydb.commit()
+					mCursor.close()	
+					mydb.close()
 					waitFlag = True
 
 
@@ -341,5 +353,6 @@ class JigsawPuzzle():
 
 if __name__ == "__main__":
 	jigsaw = JigsawPuzzle()
-	jigsaw.initGame()
+	ObjectID=1
+	jigsaw.initGame(ObjectID)
 	#sys.exit(app.exec_())
