@@ -4,10 +4,11 @@ from PyQt5.QtGui import *
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow, QPushButton, QLabel
 #from JigsawPuzzle import JigsawPuzzle as jp
-from LearningModule import LearningModule
+from LearningModule import App
 from JigsawPuzzle import JigsawPuzzle
 from UserDevelopment import UserDevelopment
 import tkinter as tk
+from new_qus import Ui_MainWindow
 
 class StartingPage(QWidget):
     def __init__(self, parent=None):
@@ -55,21 +56,36 @@ class StartingPage(QWidget):
         self.btn3.setStyleSheet("background-color: white; font-weight: bold; font-size: 25px; color: green;")
         self.btn3.clicked.connect(self.btn_3_clicked)
 
+        '''
+        self.btn4 = QPushButton("SHOW  Question", self)
+        self.btn4.setGeometry(3*horUnit, 9.5*verUnit, 6*horUnit, 1*verUnit)
+        self.btn4.setStyleSheet("background-color: white; font-weight: bold; font-size: 25px; color: green;")
+        self.btn4.clicked.connect(self.btn_4_clicked)
+        '''
+
 
     def btn_1_clicked(self):
-        self.learn = LearningModule()
+        self.learn = App()
         self.learn.show()
 
 
     def btn_2_clicked(self):
 
         self.game = JigsawPuzzle()
-        self.game.initGame()
+        self.game.initGame(2)
        
 
     def btn_3_clicked(self):
         self.dev = UserDevelopment()
         self.dev.show()
+
+    def btn_4_clicked(self):
+        self.QuesWindow = QtWidgets.QMainWindow()
+        self.ui = Ui_MainWindow()
+        #self.ui.setupUi()
+        select=False
+        self.ui.setDB(objectID)
+        self.QuesWindow.show()
 
 
 def main():

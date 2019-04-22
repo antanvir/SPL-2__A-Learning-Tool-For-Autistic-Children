@@ -1,25 +1,26 @@
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+import mysql.connector
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QMainWindow
 from PyQt5.QtWidgets import QLabel, QPushButton
 #from JigsawPuzzle import JigsawPuzzle as jp
-from LearningModule import LearningModule
+from LearningModule import App
 #from JigsawPuzzle import JigsawPuzzle
-import mysql.connector
-from gi.repository import Gdk
+#import mysql.connector
+#from gi.repository import Gdk
+import tkinter as tk
 class UserDevelopment(QWidget):
     def __init__(self, parent=None):
         super(UserDevelopment, self).__init__(parent)
 
         self.title = 'LEARNING DEVELOPMENT OF USER'
-        self.left = 50
-        self.top = 50
-        s = Gdk.Screen.get_default()
-        print(s.get_width(), s.get_height())
-        self.width = s.get_width() # 680
-        self.height = s.get_height() # 480
+        self.left = 0
+        self.top = 0
+        root = tk.Tk()
+        self.width = root.winfo_screenwidth()
+        self.height = root.winfo_screenheight()
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setStyleSheet("background-color: white;")
@@ -60,10 +61,24 @@ class UserDevelopment(QWidget):
 
         # MIDDLE    
         self.lblLearnedObj = QLabel()
-        self.lblLearnedObj.setText("Learned Objects List:\n")
-        self.lblLearnedObj.setStyleSheet("font-size: 38px; font-weight: bold;")
+        self.lblLearnedObj.setText("Object Name       Test Group       Control Group     Correct/Incorrect :\n")
+        self.lblLearnedObj.setStyleSheet("font-size: 25px; font-weight: bold;")
         self.objList = QLabel()
         self.objList.setStyleSheet("font-size: 25px")
+        objectName=list()
+        objectName.append(" ")
+        objectName.append("Bowl")
+        objectName.append("Glass")
+        objectName.append("Pillow")
+        objectName.append("Pen")
+        objectName.append("Mobile")
+        objectName.append("Switch")
+        objectName.append("Door")
+        objectName.append("Bed")
+        objectName.append("Water")
+        objectName.append("Spoon")
+        objectName.append("Pencil")
+
         finalList= list()
         finalList.append(" ")
         finalList.append("0:00:03")
@@ -76,6 +91,7 @@ class UserDevelopment(QWidget):
         finalList.append("0:00:03")
         finalList.append("0:00:04")
         finalList.append("0:00:05")
+        finalList.append("0:00:12")
         '''
         listItem = []
         listItem.append('Nothing Learned Yet\n')
@@ -90,7 +106,7 @@ class UserDevelopment(QWidget):
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-    #passwd = "",
+            passwd = "ant904",
             database = "spl"
     #auth_plugin='mysql_native_password'
         )
@@ -99,20 +115,22 @@ class UserDevelopment(QWidget):
         final=""
         for i in range(1,4):
             myCursor = mydb.cursor()
-            sql = "SELECT qid, elapsedTime from questions where qid=%s"
+            sql = "SELECT qid, elapsedTime, result from questions where qid=%s"
             val=(i,)
             print(i)
             myCursor.execute(sql,val)
             row=myCursor.fetchone()
             
-            final+="Object "
-            final+=str(row[0])
-            final+=" took "
+            final+=str(objectName[i])
+            final+= str("                   ")
+            
             final+=str(row[1])
-            final+=" seconds "
-            final+=" while test group took "
+            final+=" seconds                "
+            
             final+=str(finalList[i])
-            final+=" seconds\n"
+            final+=" seconds                 "
+            final+=str(row[2])
+            final+="\n"
             print(final)
         self.objList.setText(final)
         mydb.commit()
@@ -124,9 +142,10 @@ class UserDevelopment(QWidget):
         vbox2.addWidget(self.objList)
 
         # Right
+        self.heading=QLabel
         self.lblCorretAns = QLabel()
         self.lblCorretAns.setText(
-            "Objects Identified Correctly in Question:\n")
+            "Response time of game module:\n")
         self.lblCorretAns.setStyleSheet("font-size: 18px; font-weight: bold;")
         self.CorrAnsList = QLabel()
         self.CorrAnsList.setStyleSheet("font-size: 25px")
@@ -136,28 +155,24 @@ class UserDevelopment(QWidget):
         listItem.append('Will Be Upgraded Soon\n')
         '''
         mydb = mysql.connector.connect(
-            host = 'localhost',
-            user = "root",
-    #passwd = "",
-            database = "spl"
+                host = 'localhost',
+                user = "root",
+                passwd = "ant904",
+                database = "spl"
     #auth_plugin='mysql_native_password'
         )
         final=""
         for i in range(1,4):
             myCursor = mydb.cursor()
-            sql = "SELECT qid, result from questions where qid=%s"
+            sql = "SELECT game_id, elapsedTime from game where game_id=%s"
             val=(i,)
             print(i)
             myCursor.execute(sql,val)
             row=myCursor.fetchone()
             
-            final+="Object "
-            final+=str(row[0])
-            final+=" was learned "
-            if str(row[1])== "correct":
-                final+=" correctly\n"
-            else:
-                final+=" incorrectly\n"
+            
+            final+=str(row[1])
+            final+="  seconds\n"
             print(final)
         self.CorrAnsList.setText(final)
         mydb.commit()

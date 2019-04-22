@@ -14,9 +14,9 @@ class JigsawPuzzle():
 		mainImagePath, part1_path, part2_path, part3_path, part4_path = None, None, None, None, None
 		
 		mydb = mysql.connector.connect(
-			host='localhost',
-			user="root",
-			# passwd="",
+			host = 'localhost',
+		    user = "root",
+		    passwd = "ant904",
 			database="spl"
 		)
 		myCursor = mydb.cursor(buffered=True)
@@ -47,6 +47,7 @@ class JigsawPuzzle():
 
 		image = pygame.image.load(mainImagePath)				# mainImagePath
 		width, height = image.get_size()
+		print(width, height)
 
 		IMAGE_SIZE = (width, height)
 		DISPLAY_SIZE = (4*width, 3*height + height//2)

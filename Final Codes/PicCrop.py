@@ -14,8 +14,10 @@ def crop(im, height, width):
 
 
 if __name__ == '__main__':
-												
-    im = Image.open("mango.jpg")						# Manually Change
+    path1=path="/home/anika/Documents/spl/images/gamepic/switch_1"
+    path1+=".png"
+    print(path1)								
+    im = Image.open(path1)						
     imgwidth, imgheight = im.size
     print('Image size is: %d x %d ' % (imgwidth, imgheight))
     height = int(imgheight / 2) + 1
@@ -26,6 +28,6 @@ if __name__ == '__main__':
         #print('K: ', k, '\tpiece: ', piece)
         img = Image.new('RGB', (width, height), 255)
         img.paste(piece)
-        path = os.path.join("OBJ-%dIMG-%d.jpg" %(ObjNo, int(k + 1)))       # Manually Change
-        img.save(path)
-        #os.rename(path, os.path.join("cam%d.1%05d" %(int(k + 1), filenum)))
+        #path = os.path.join(path +str(int(k + 1))+".png")       
+        img.save(path +str(int(k + 1))+".png")
+#os.rename(path, os.path.join("cam%d.1%05d" %(int(k + 1), filenum)))

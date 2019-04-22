@@ -15,7 +15,7 @@ import tkinter as tk
 from new_qus import Ui_MainWindow
 
 
-class LearningModule(QWidget):
+class App(QWidget):
 
     curFileId = 1
     ObjectID = 1
@@ -53,9 +53,9 @@ class LearningModule(QWidget):
 
         # INITIAL DATABASE 
         mydb = mysql.connector.connect(
-            host='localhost',
-            user="root",
-            # passwd="",
+            host = 'localhost',
+            user = "root",
+            passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)
@@ -120,10 +120,11 @@ class LearningModule(QWidget):
         
 
         self.imglabel = QLabel(self)
+        self.imglabel.setGeometry(0.5*horUnit, 3*verUnit, 4.5*horUnit, 6*verUnit)
         # self.pixmap = QPixmap('C:/Users/dell/Downloads/Python-master/Python-master/ImageShow/mango.jpg')
         self.pixmap = QPixmap(App.img[0])
+        self.pixmap = self.pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
         self.imglabel.setPixmap(self.pixmap)
-        self.imglabel.setGeometry(0.5*horUnit, 3*verUnit, 4.5*horUnit, 6*verUnit)
         self.imglabel.setStyleSheet("background-color: lightgray;")
         self.imglabel.setAlignment(QtCore.Qt.AlignCenter)
         
@@ -132,7 +133,7 @@ class LearningModule(QWidget):
         self.audioButton.setToolTip('play audio')
         self.audioButton.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
         self.audioButton.setGeometry(7*horUnit, 9.5*verUnit, 4.5*horUnit, 0.5*verUnit)
-        self.audioButton.clicked.connect(lambda: self.play_audio(LearningModule.audio))                # NECESSARY
+        self.audioButton.clicked.connect(lambda: self.play_audio(App.audio))                # NECESSARY
 
         # Previous button widget
         self.buttonP = QPushButton('\t PREVIOUS IMAGE \t', self)
@@ -157,7 +158,7 @@ class LearningModule(QWidget):
 
 
         # OBJECT NAME LABEL
-        self.lblObjName = QLabel()
+        self.lblObjName = QLabel(self)
         self.pixmap = QPixmap(App.objNameImg)
         self.lblObjName.setPixmap(self.pixmap)
         self.lblObjName.setGeometry(3*horUnit, 0*verUnit, 6*horUnit, 2*verUnit)
@@ -214,9 +215,12 @@ class LearningModule(QWidget):
 
 
     def showObjectNameImage(self, filepath):
+        print(filepath)
         self.lblObjName.clear()
         pixmap = QPixmap(filepath)
-        self.lblObjName.setPixmap(self.pixmap)
+        pixmap = pixmap.scaled(self.imglabel.width(), self.imglabel.height(), QtCore.Qt.KeepAspectRatio)
+        self.lblObjName.setPixmap(pixmap)
+        self.imglabel.setAlignment(QtCore.Qt.AlignCenter)
 
     def play_audio(self, path):
         QSound.play(path)
@@ -224,9 +228,9 @@ class LearningModule(QWidget):
 
     def on_click_prev(self):
         mydb = mysql.connector.connect(
-            host='localhost',
-            user="root",
-            # passwd="",
+            host = 'localhost',
+            user = "root",
+            passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor()
@@ -270,9 +274,9 @@ class LearningModule(QWidget):
     def on_click_next(self):
         if (App.curFileId + 1) > App.total:
             mydb = mysql.connector.connect(
-                host='localhost',
-                user="root",
-                # passwd="",
+                host = 'localhost',
+                user = "root",
+                passwd = "ant904",
                 database="spl"
             )
             myCursor = mydb.cursor()
@@ -296,7 +300,7 @@ class LearningModule(QWidget):
             App.curFileId = 1
             App.ObjectID += 1
 
-            if App.ObjectID in App.alreadyLearned:
+            if (App.ObjectID - 1) in App.alreadyLearned:
                 self.showImage(App.img[App.curFileId - 1])
 
                 self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
@@ -305,9 +309,7 @@ class LearningModule(QWidget):
                 self.showObjectNameImage(App.objNameImg)
                 # self.buttonN.hide()
             else:
-                self.showQuestionWindow(App.ObjectID - 1)
-
-                App.alreadyLearned.append(App.ObjectID)
+                App.alreadyLearned.append(App.ObjectID - 1)
 
                 self.showImage(App.img[App.curFileId - 1])
 
@@ -315,6 +317,8 @@ class LearningModule(QWidget):
                 self.playButton.setEnabled(True)
 
                 self.showObjectNameImage(App.objNameImg)
+
+                self.showQuestionWindow(App.ObjectID - 1)
         else:
             self.buttonP.show()
             App.curFileId += 1
@@ -322,9 +326,9 @@ class LearningModule(QWidget):
 
     def on_click_skip(self):
         mydb = mysql.connector.connect(
-            host='localhost',
-            user="root",
-            # passwd="",
+            host = 'localhost',
+            user = "root",
+            passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)
@@ -356,14 +360,16 @@ class LearningModule(QWidget):
         self.showObjectNameImage(App.objNameImg)
 
 
-    def showQuestionWindow(self):
+    def showQuestionWindow(self,objectID):
         self.QuesWindow = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()
-        self.ui.setupUi(self.QuesWindow)
+        #self.ui.setupUi()
+        select=False
+        self.ui.setDB(objectID)
         self.QuesWindow.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    obj = LearningModule()
+    obj = App()
     sys.exit(app.exec_())

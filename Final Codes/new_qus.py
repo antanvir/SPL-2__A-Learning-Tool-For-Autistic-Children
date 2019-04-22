@@ -3,7 +3,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 #-*- coding: utf8 -*-
 import datetime
 import time
-import pyaudio 
 import wave 
 from pygame import mixer
 from threading import Timer
@@ -46,7 +45,7 @@ class Ui_MainWindow(object):
         mydb = mysql.connector.connect(
                 host = 'localhost',
                 user = "root",
-                #passwd = "hridita123",
+                passwd = "ant904",
                 database = "spl"
                 #auth_plugin='mysql_native_password'
                 )
@@ -136,7 +135,7 @@ class Ui_MainWindow(object):
                 #print(Ui_MainWindow.select)
                 mydb.close()
              
-        master = tk.Tk()
+        master = tk.Toplevel()
         master.overrideredirect(False)
 
         
