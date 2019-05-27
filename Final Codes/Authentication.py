@@ -28,7 +28,7 @@ class App(QWidget):
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        self.setStyleSheet("background-color: rgb(92, 162, 232)");
+        self.setStyleSheet("background-color: rgb(117, 163, 163)");
 
         self.lbl_heading = QLabel("USER AUTHENTICATION", self)
         self.lbl_heading.setStyleSheet("font-size: 25px; font-weight: bold; color: blue;")
@@ -78,12 +78,12 @@ class App(QWidget):
 
 
     def on_click_signUp(self):
-        self.storeIntoDatabase()
+        #self.storeIntoDatabase()
         self.loadStartingPage()
 
 
     def on_click_signIn(self):
-
+        '''
         App.trial +=1
 
         mydb = mysql.connector.connect(
@@ -111,11 +111,15 @@ class App(QWidget):
                 break;
             elif name == row[0] and App.trial >= 5 :
                 App.username = name
+                txt_pwd.setText("");
                 lbl_reset.show()
                 btn_reset.show()
+        '''
 
 
     def on_click_reset(self):
+        '''
+        App.trial = 0
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
@@ -137,6 +141,7 @@ class App(QWidget):
         mydb.close()
 
         self.loadStartingPage()
+        '''
 
 
     def storeIntoDatabase(self):

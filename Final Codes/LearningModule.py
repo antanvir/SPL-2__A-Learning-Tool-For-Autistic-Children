@@ -157,6 +157,15 @@ class App(QWidget):
         self.buttonN.clicked.connect(self.on_click_next)
 
 
+        # Question Window load button widget
+        self.btnQues = QPushButton('\t TAKE A TEST \t', self)
+        self.btnQues.setToolTip('Go to next picture')
+        self.btnQues.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
+        self.btnQues.setGeometry(4.6*horUnit, 9.3*verUnit, 1.8*horUnit, 0.8*verUnit)
+        self.btnQues.clicked.connect(self.on_click_test)
+        self.btnQues.hide()
+
+
         # OBJECT NAME LABEL
         self.lblObjName = QLabel(self)
         self.pixmap = QPixmap(App.objNameImg)
@@ -272,6 +281,8 @@ class App(QWidget):
             self.showImage(App.img[App.curFileId - 1])
 
     def on_click_next(self):
+        self.btnQues.hide()
+        
         if (App.curFileId + 1) > App.total:
             mydb = mysql.connector.connect(
                 host = 'localhost',
@@ -318,7 +329,8 @@ class App(QWidget):
 
                 self.showObjectNameImage(App.objNameImg)
 
-                self.showQuestionWindow(App.ObjectID - 1)
+                #self.showQuestionWindow(App.ObjectID - 1)
+                self.btnQues.show()
         else:
             self.buttonP.show()
             App.curFileId += 1
@@ -358,6 +370,11 @@ class App(QWidget):
         self.playButton.setEnabled(True)
 
         self.showObjectNameImage(App.objNameImg)
+
+
+    def on_click_test(self):
+        self.showQuestionWindow(App.ObjectID - 1)
+        self.btnQues.hide()
 
 
     def showQuestionWindow(self,objectID):
