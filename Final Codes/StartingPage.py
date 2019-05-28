@@ -13,6 +13,7 @@ from new_qus import Ui_MainWindow
 from additem import Ui_Form
 from backend_qus import Ui_FormQ
 from ExpressionDetection import VideoWindow, EmotionPredictor, GazeEstimator
+from EyeGaze import VideoWindowEye, EmotionPredictor, GazeEstimator
 
 class StartingPage(QWidget):
     def __init__(self, parent=None):
@@ -60,9 +61,12 @@ class StartingPage(QWidget):
         self.btn3.setGeometry(4.5*horUnit, 7*verUnit, 6.5*horUnit, 1*verUnit)
         self.btn3.setStyleSheet("background-color: white; font-weight: bold; font-size: 25px; color: green;")
         self.btn3.clicked.connect(self.btn_3_clicked)
-
-
-
+        
+        self.btnE = QPushButton("EYE-GAZE  CONTENTS", self)
+        self.btnE.setGeometry(4.5*horUnit, 9*verUnit, 6.5*horUnit, 1*verUnit)
+        self.btnE.setStyleSheet("background-color: white; font-weight: bold; font-size: 25px; color: green;")
+        self.btnE.clicked.connect(self.btn_E_clicked)
+        
 
         self.label2 = QLabel(self)
         self.label2.setText("CONFIGURATION & PROFILE\n_____________________________")
@@ -116,14 +120,11 @@ class StartingPage(QWidget):
         self.exp = VideoWindow()
         self.exp.show()
 
-    '''def btn_4_clicked(self):
-        self.QuesWindow = QtWidgets.QMainWindow()
-        self.ui = Ui_MainWindow()
-        #self.ui.setupUi()
-        select=False
-        self.ui.setDB(objectID)
-        self.QuesWindow.show()'''
-
+    
+    def btn_E_clicked(self):                    # Eyegaze Content
+        self.eye = VideoWindowEye()
+        self.eye.show()
+    
 
     def btn_4_clicked(self):
         self.dev = UserDevelopment()

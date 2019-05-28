@@ -216,7 +216,7 @@ class EmotionPredictor():
         return facial_expression
     
 
-class VideoWindowEye(QMainWindow):
+class VideoWindow(QMainWindow):
 
     def preliminaryHistogramEqualization(self, frame):
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
@@ -234,7 +234,7 @@ class VideoWindowEye(QMainWindow):
             lines = dataFile.read().split('\n')[:-1]
 
             for i in range(len(lines)):
-                lines[i] = lines[i].split(', ')
+	            lines[i] = lines[i].split(', ')
         
             line = lines[0]
             eye_width_sum = int(line[0])
@@ -277,7 +277,7 @@ class VideoWindowEye(QMainWindow):
  
         
     def openFile(self):
-        object_id = 2
+        object_id = 1
         #fileName = "video.mp4"
         mydb = mysql.connector.connect(
                 host = 'localhost',
@@ -287,13 +287,13 @@ class VideoWindowEye(QMainWindow):
                 #auth_plugin='mysql_native_password'
                 )
         myCursor = mydb.cursor(buffered=True)
-        sql = "SELECT video FROM eyegazeContent where content_id=%s"
+        sql = "SELECT video, realExpression FROM expressiveContent where conteent_id=%s"
         val=(object_id,)
         myCursor.execute(sql,val)
         row=myCursor.fetchone()
 
         fileName = row[0]
-        #realExpression = row[1]
+        realExpression = row[1]
 
         bias_const, width_range = self.find_parameters()
         
@@ -336,12 +336,7 @@ class VideoWindowEye(QMainWindow):
 
         outputFileName = "EyeGazeOutput/Object" + str(object_id) + "_data.txt"
         file = open(outputFileName, "a+")
-        sql = "update eyegazeContent set eyePositionOutput=%s where content_id=%s"
-        val=(outputFileName,object_id,)
-        newcur=mydb.cursor()
-        newcur.execute(sql,val)
-        mydb.commit()
-        newcur.close()
+
         start_time = datetime.datetime.now().replace(microsecond = 0)
             
         while (cap.isOpened()):
@@ -421,7 +416,7 @@ class VideoWindowEye(QMainWindow):
 
                 if time_slice >= 1.0:
                     print(show_prefer)
-                    finalResult = str(cur_time) + ":  " + str(show_prefer[0]) + ", " + str(show_prefer[1])
+                    finalResult = str(cur_time) + ": " + str(show_prefer[0]) + "," + str(show_prefer[1])
                     #print("Final result: ", finalResult)
                     file.write(finalResult + "\n")
 
@@ -472,13 +467,53 @@ class VideoWindowEye(QMainWindow):
     
     
     def __init__(self, parent=None):
-        super(VideoWindowEye, self).__init__(parent)
+        super(VideoWindow, self).__init__(parent)
         self.setWindowTitle("Eye Gaze Detection")
 
+        '''
+        self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+
+        videoWidget = QVideoWidget()
+        self.errorLabel = QLabel()
+        self.errorLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        '''
         self.width_bias = 30
         self.bias_const = 200
         self.openFile()
-      
+        '''
+        
+        openAction = QAction(QIcon('open.png'), '&Open', self)
+        openAction.setShortcut('Ctrl+O')
+        openAction.setStatusTip('Open movie')
+        openAction.triggered.connect(self.openFile)
+        
+        trainAction = QAction(QIcon('open.png'), '&Initialize', self)
+        trainAction.setShortcut('Ctrl+I')
+        trainAction.setStatusTip('Train Center')
+        #trainAction.triggered.connect(self.exitCall)
+        trainAction.triggered.connect(self.trainUI)
+
+        exitAction = QAction(QIcon('exit.png'), '&Exit', self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(self.exitCall)
+
+        menuBar = self.menuBar()
+        fileMenu = menuBar.addMenu('&File')
+        fileMenu.addAction(openAction)
+        fileMenu.addAction(trainAction)
+        fileMenu.addAction(exitAction)
+
+        wid = QWidget(self)
+        self.setCentralWidget(wid)
+
+        layout = QVBoxLayout()
+        layout.addWidget(videoWidget)
+        layout.addWidget(self.errorLabel)
+
+        wid.setLayout(layout)
+        self.mediaPlayer.error.connect(self.handleError)
+        '''
         
     
     def exitCall(self):
@@ -489,7 +524,7 @@ class VideoWindowEye(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    player = VideoWindowEye()
+    player = VideoWindow()
     player.resize(640, 480)
     player.show()
     sys.exit(app.exec_())

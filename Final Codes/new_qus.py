@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import datetime
 import time
 import wave 
-from pygame import mixer
+import pygame 
 from threading import Timer
 import mysql.connector
 import tkinter as tk
@@ -13,7 +13,7 @@ from PIL import Image
 from PIL import ImageTk
 import math
 from PyQt5 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
+from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QSound
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget)
@@ -35,7 +35,8 @@ class Ui_MainWindow(object):
         #player.playAudios()
         #self.setDB(object_id)
         
-    def setDB(self,object_id):
+    def setDB(self,object_id,select):
+        Ui_MainWindow.select=select
         nameList=list()
         imageList=list()
         qus_nam=""
@@ -45,7 +46,7 @@ class Ui_MainWindow(object):
         mydb = mysql.connector.connect(
                 host = 'localhost',
                 user = "root",
-                passwd = "ant904",
+                #passwd = "ant904",
                 database = "spl"
                 #auth_plugin='mysql_native_password'
                 )
@@ -103,6 +104,9 @@ class Ui_MainWindow(object):
                     b=datetime.datetime.now().replace(microsecond=0)
                     c=str(b-a)
                     print(b-a)
+                    pygame.mixer.music.load("/home/anika/Downloads/applause.wav") #Loading File Into Mixer
+                    pygame.mixer.music.play() #Playing It In The Whole Device
+
                     sql = "update questions set result=%s, elapsedTime=%s where qid=%s"
                     val=('correct',c,object_id,)
                     #UPDATE products SET ($fields) VALUES ($values) WHERE sku = '$checksku
@@ -123,6 +127,9 @@ class Ui_MainWindow(object):
                     b=datetime.datetime.now().replace(microsecond=0)
                     c=str(b-a)
                     print(b-a)
+                    pygame.mixer.music.load("/home/anika/Downloads/failing.mp3") #Loading File Into Mixer
+                    pygame.mixer.music.play() #Playing It In The Whole Device
+
                     sql = "update questions set result=%s, elapsedTime=%s where qid=%s"
                     val=('incorrect',c,object_id)
                     newcur=mydb.cursor()
@@ -130,7 +137,7 @@ class Ui_MainWindow(object):
                     
                     mydb.commit()
                 #myCursor.close()
-                Ui_MainWindow.select=False
+                #Ui_MainWindow.select=False
                 #print("kkjk")
                 #print(Ui_MainWindow.select)
                 mydb.close()
@@ -210,7 +217,7 @@ class Ui_MainWindow(object):
         
         master.mainloop()
         
-        master.destroy() 
+        #master.withdraw() 
     def playAudio(self,audio_nam):
         #time.sleep(7)
         #playsound("m.mp3")
@@ -242,7 +249,11 @@ class Ui_MainWindow(object):
 
 
         #Timer(10, playsound(audio_nam)).start()
-        playsound(audio_nam)
+        '''playsound(audio_nam)
+        QSound.play(audio_nam)'''
+        pygame.init()
+        pygame.mixer.music.load(audio_nam) #Loading File Into Mixer
+        pygame.mixer.music.play() #Playing It In The Whole Device
 
 
 if __name__ == "__main__":

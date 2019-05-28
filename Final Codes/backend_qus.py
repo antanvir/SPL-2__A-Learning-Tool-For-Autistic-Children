@@ -1,58 +1,161 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:\Users\dell\Desktop\backend\additem2.ui'
-#
-# Created by: PyQt5 UI code generator 5.11.3
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 import mysql.connector
-class Ui_Form(object):
+class Ui_FormQ(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1000, 600)
+        Form.resize(1960, 1420)
         Form.setMouseTracking(True)
         Form.setAutoFillBackground(True)
-        self.addNameButton=QtWidgets.QPushButton(Form)
-        self.addNameButton.setGeometry(QtCore.QRect(200,120,93,28))
-        self.addNameButton.setObjectName("addNameButton")
-        self.vidpushButton = QtWidgets.QPushButton(Form)
-        self.vidpushButton.setGeometry(QtCore.QRect(90, 320, 93, 28))
-        self.vidpushButton.setObjectName("vidpushButton")
-        self.imgpushButton1 = QtWidgets.QPushButton(Form)
-        self.imgpushButton1.setGeometry(QtCore.QRect(320, 320, 93, 28))
-        self.imgpushButton1.setObjectName("imgpushButton1")
-        self.imgpushButton2 = QtWidgets.QPushButton(Form)
-        self.imgpushButton2.setGeometry(QtCore.QRect(550, 320, 93, 28))
-        self.imgpushButton2.setObjectName("imgpushButton2")
-        self.imgpushButton3 = QtWidgets.QPushButton(Form)
-        self.imgpushButton3.setGeometry(QtCore.QRect(800, 320, 93, 28))
-        self.imgpushButton3.setObjectName("imgpushButton3")
-        self.audpushButton = QtWidgets.QPushButton(Form)
-        self.audpushButton.setGeometry(QtCore.QRect(700, 120, 93, 28))
-        self.audpushButton.setObjectName("audpushButton")
-        self.objpushButton = QtWidgets.QPushButton(Form)
-        self.objpushButton.setGeometry(QtCore.QRect(300, 480, 311, 61))
-        self.objpushButton.setObjectName("objpushButton")
+        
+        p = Form.palette()
+        p.setColor(Form.backgroundRole(), QtGui.QColor(235, 255, 211))
+        Form.setPalette(p)
+
+
+        self.label= QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(600, 30, 700, 50))
+        self.label.setText("Add images and answers for questions")
+        self.label.setFont(QtGui.QFont("Times", 20, QtGui.QFont.Black))
+
+        self.label1= QtWidgets.QLabel(Form)
+        self.label1.setGeometry(QtCore.QRect(350, 100, 400, 70))
+        self.label1.setText("Select question name")
+        self.label1.setFont(QtGui.QFont("Times", 14, QtGui.QFont.Black))
         self.addName = QtWidgets.QLineEdit(Form)
-        self.addName.setGeometry(QtCore.QRect(50, 20, 361, 60))
+        self.addName.setGeometry(QtCore.QRect(150, 150,550, 40))
         self.addName.setObjectName("addName")
-        self.imglineEdit = QtWidgets.QLineEdit(Form)
-        self.imglineEdit.setGeometry(QtCore.QRect(290, 190,181, 81))
-        self.imglineEdit.setObjectName("imglineEdit")
-        self.imglineEdit2 = QtWidgets.QLineEdit(Form)
-        self.imglineEdit2.setGeometry(QtCore.QRect(520, 190, 181,81))
-        self.imglineEdit2.setObjectName("imglineEdit")
-        self.imglineEdit3 = QtWidgets.QLineEdit(Form)
-        self.imglineEdit3.setGeometry(QtCore.QRect(750, 190, 181, 81))
-        self.imglineEdit3.setObjectName("imglineEdit")
+       	self.addNameButton=QtWidgets.QPushButton(Form)
+        self.addNameButton.setGeometry(QtCore.QRect(370,210,93,28))
+        self.addNameButton.setObjectName("addNameButton")
+
+
+        self.label2= QtWidgets.QLabel(Form)
+        self.label2.setGeometry(QtCore.QRect(1100, 100, 400, 70))
+        self.label2.setText("Select audio")
+        self.label2.setFont(QtGui.QFont("Times", 14, QtGui.QFont.Black))
         self.audlineEdit = QtWidgets.QLineEdit(Form)
-        self.audlineEdit.setGeometry(QtCore.QRect(550, 20, 361, 60))
+        self.audlineEdit.setGeometry(QtCore.QRect(880, 150, 600, 40))
         self.audlineEdit.setObjectName("audlineEdit")
+        self.audpushButton = QtWidgets.QPushButton(Form)
+        self.audpushButton.setGeometry(QtCore.QRect(1100, 210, 93, 28))
+        self.audpushButton.setObjectName("audpushButton")
+
+        self.line = QtWidgets.QLineEdit(Form)
+        self.line.setGeometry(QtCore.QRect(20, 250, 1700, 1))
+        self.line.setObjectName("addName")
+        
+        
+        self.label3 = QtWidgets.QLabel(Form)
+        self.label3.setGeometry(QtCore.QRect(350, 250, 361, 70))
+        self.label3.setText("Select option 1 ")
+        self.label3.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
         self.vidlineEdit = QtWidgets.QLineEdit(Form)
-        self.vidlineEdit.setGeometry(QtCore.QRect(50, 190, 181, 81))
+        self.vidlineEdit.setGeometry(QtCore.QRect(150, 300, 550, 40))
         self.vidlineEdit.setObjectName("vidlineEdit")
+        self.vidpushButton = QtWidgets.QPushButton(Form)
+        self.vidpushButton.setGeometry(QtCore.QRect(370, 360, 93, 28))
+        self.vidpushButton.setObjectName("vidpushButton")
+
+
+        self.label4 = QtWidgets.QLabel(Form)
+        self.label4.setGeometry(QtCore.QRect(1050, 250, 361, 70))
+        self.label4.setText("Write name of option 1 ")
+        self.label4.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))    
+        self.imgName = QtWidgets.QLineEdit(Form)
+        self.imgName.setGeometry(QtCore.QRect(880, 300,600, 40))
+        self.imgName.setObjectName("imgName")
+
+        self.line2 = QtWidgets.QLineEdit(Form)
+        self.line2.setGeometry(QtCore.QRect(20, 400, 1700, 1))
+        self.line2.setObjectName("addName")
+        
+
+        self.label5 = QtWidgets.QLabel(Form)
+        self.label5.setGeometry(QtCore.QRect(350, 400, 361, 70))
+        self.label5.setText("Select option 2 ")
+        self.label5.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imglineEdit = QtWidgets.QLineEdit(Form)
+        self.imglineEdit.setGeometry(QtCore.QRect(150,450 ,550, 40))
+        self.imglineEdit.setObjectName("imglineEdit")
+        self.imgpushButton1 = QtWidgets.QPushButton(Form)
+        self.imgpushButton1.setGeometry(QtCore.QRect(370, 510, 93, 28))
+        self.imgpushButton1.setObjectName("imgpushButton1")
+
+
+        self.label6= QtWidgets.QLabel(Form)
+        self.label6.setGeometry(QtCore.QRect(1050, 400, 361, 70))
+        self.label6.setText("Write name of option 2 ")
+        self.label6.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imgName1 = QtWidgets.QLineEdit(Form)
+        self.imgName1.setGeometry(QtCore.QRect(880, 450, 600, 40))
+        self.imgName1.setObjectName("imgName2")
+
+        self.line3 = QtWidgets.QLineEdit(Form)
+        self.line3.setGeometry(QtCore.QRect(20, 550, 1700, 1))
+        self.line3.setObjectName("addName")
+        
+
+        self.label7= QtWidgets.QLabel(Form)
+        self.label7.setGeometry(QtCore.QRect(350, 550, 361, 70))
+        self.label7.setText("Select option 3")
+        self.label7.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imglineEdit2 = QtWidgets.QLineEdit(Form)
+        self.imglineEdit2.setGeometry(QtCore.QRect(150, 600, 550,40))
+        self.imglineEdit2.setObjectName("imglineEdit")
+        self.imgpushButton2 = QtWidgets.QPushButton(Form)
+        self.imgpushButton2.setGeometry(QtCore.QRect(370, 660, 100, 30))
+        self.imgpushButton2.setObjectName("imgpushButton2")
+
+
+        self.label8= QtWidgets.QLabel(Form)
+        self.label8.setGeometry(QtCore.QRect(1050, 550, 361, 70))
+        self.label8.setText("Write name of option 3")
+        self.label8.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imgName2 = QtWidgets.QLineEdit(Form)
+        self.imgName2.setGeometry(QtCore.QRect(880, 600, 600, 40))
+        self.imgName2.setObjectName("imgName2")
+
+        self.line4 = QtWidgets.QLineEdit(Form)
+        self.line4.setGeometry(QtCore.QRect(20, 700, 1700, 1))
+        self.line4.setObjectName("addName")
+        
+
+
+        self.label9= QtWidgets.QLabel(Form)
+        self.label9.setGeometry(QtCore.QRect(350, 700, 361, 70))
+        self.label9.setText("Select option 4")
+        self.label9.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imglineEdit3 = QtWidgets.QLineEdit(Form)
+        self.imglineEdit3.setGeometry(QtCore.QRect(150, 750, 550, 40))
+        self.imglineEdit3.setObjectName("imglineEdit")
+        self.imgpushButton3 = QtWidgets.QPushButton(Form)
+        self.imgpushButton3.setGeometry(QtCore.QRect(370, 810, 100, 30))
+        self.imgpushButton3.setObjectName("imgpushButton3")
+
+        self.label10= QtWidgets.QLabel(Form)
+        self.label10.setGeometry(QtCore.QRect(1050, 700, 361, 70))
+        self.label10.setText("Write name of option 4")
+        self.label10.setFont(QtGui.QFont("Arial", 14, QtGui.QFont.Black))
+        self.imgName3 = QtWidgets.QLineEdit(Form)
+        self.imgName3.setGeometry(QtCore.QRect(880, 750, 600, 40))
+        self.imgName3.setObjectName("imgName3")
+
+        self.line5 = QtWidgets.QLineEdit(Form)
+        self.line5.setGeometry(QtCore.QRect(20, 850, 1700, 1))
+        self.line5.setObjectName("addName")
+        
+
+        self.labelp = QtWidgets.QLabel(Form)
+        self.labelp.setGeometry(QtCore.QRect(250, 850, 361, 70))
+        self.labelp.setText("Write down the answer of the question")
+        self.labelp.setFont(QtGui.QFont("Times", 14, QtGui.QFont.Black))
+        self.answer = QtWidgets.QLineEdit(Form)
+        self.answer.setGeometry(QtCore.QRect(150, 900,550, 51))
+        self.answer.setObjectName("answer")
+
+        self.objpushButton = QtWidgets.QPushButton(Form)
+        self.objpushButton.setGeometry(QtCore.QRect(1000, 900, 311, 50))
+        self.objpushButton.setObjectName("objpushButton")
         self.addNameButton.clicked.connect(self.setImage1)
         self.imgpushButton1.clicked.connect(self.setImage2)
         self.imgpushButton2.clicked.connect(self.setImage3)
@@ -61,24 +164,6 @@ class Ui_Form(object):
         self.audpushButton.clicked.connect(self.setAudio)
         self.objpushButton.clicked.connect(self.additem)
 
-        self.imgName = QtWidgets.QLineEdit(Form)
-        self.imgName.setGeometry(QtCore.QRect(50, 370,181, 81))
-        self.imgName.setObjectName("imgName")
-        self.imgName1 = QtWidgets.QLineEdit(Form)
-        self.imgName1.setGeometry(QtCore.QRect(290, 370, 181,81))
-        self.imgName1.setObjectName("imgName2")
-        self.imgName2 = QtWidgets.QLineEdit(Form)
-        self.imgName2.setGeometry(QtCore.QRect(520, 370, 181, 81))
-        self.imgName2.setObjectName("imgName2")
-        self.imgName3 = QtWidgets.QLineEdit(Form)
-        self.imgName3.setGeometry(QtCore.QRect(750, 370, 181, 81))
-        self.imgName3.setObjectName("imgName3")
-
-
-        self.answer = QtWidgets.QLineEdit(Form)
-        self.answer.setGeometry(QtCore.QRect(420, 100,170, 51))
-        self.answer.setObjectName("answer")
-        
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -94,35 +179,35 @@ class Ui_Form(object):
         self.objpushButton.setText(_translate("Form", "Add Object"))
 
     def setImage1(self):
-        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Documents/spl/question", "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "home/anika/Downloads/question", "Image Files (*.png *.jpg *.jpeg *.bmp)")
         print(ifileName)
         self.addName.setText(ifileName)
     def setImage2(self):
-        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Documents/spl/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Downloads/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
         print(ifileName)
         self.imglineEdit.setText(ifileName)
     def setImage3(self):
-        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Documents/spl/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Downloads/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
         print(ifileName)
         self.imglineEdit2.setText(ifileName)
     def setImage4(self):
-        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Documents/spl/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Downloads/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
         print(ifileName)
         self.imglineEdit3.setText(ifileName)
 
     def setImage5(self):
-        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Documents/spl/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
+        ifileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "/home/anika/Downloads/images", "Image Files (*.png *.jpg *.jpeg *.bmp)")
         print(ifileName)
         self.vidlineEdit.setText(ifileName)
 
 
     def setVideo(self):
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Video", "/home/anika/Documents/spl/videos", "*.mp4")
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Video", "/home/anika/Downloads/videos", "*.mp4")
         print(fileName)
         self.vidlineEdit.setText(fileName)
 
     def setAudio(self):
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Audio", "/home/anika/Documents/spl/audios/audios", "*.mp3 *.wav")
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Audio", "/home/anika/Downloads/audios/audios", "*.mp3 *.wav")
         print(fileName)
         self.audlineEdit.setText(fileName)
 
@@ -184,4 +269,4 @@ if __name__ == "__main__":
     ui = Ui_Form()
     ui.setupUi(Form)
     Form.show()
-sys.exit(app.exec_())
+    sys.exit(app.exec_())

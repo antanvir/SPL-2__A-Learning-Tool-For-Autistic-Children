@@ -221,12 +221,12 @@ class UserDevelopment(QWidget):
         self.expOutput = QPlainTextEdit(self)
         self.expOutput.setReadOnly(True)
         self.expOutput.setStyleSheet("font-size: 17px; background-color: silver;")
-        self.expOutput.insertPlainText("[ Expression output ]:\n_____________________________\n\n")
+        self.expOutput.insertPlainText("[ Expression output ]:\n_________________________\n\n")
 
         self.expOutput1 = QPlainTextEdit(self)
         self.expOutput1.setReadOnly(True)
         self.expOutput1.setStyleSheet("font-size: 17px; background-color: silver;")
-        self.expOutput1.insertPlainText("[ Eye-gaze output ]:\n_____________________________\n\n")
+        self.expOutput1.insertPlainText("[ Eye-gaze output ]:\n_________________________\n\n")
         
 
         hbx = QHBoxLayout()                     #QComboBox

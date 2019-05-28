@@ -124,7 +124,7 @@ class VideoWindow(QMainWindow):
 	
 		
 	def openFile(self):
-		object_id = 1
+		object_id = 2
 		mydb = mysql.connector.connect(
 				host = 'localhost',
 				user = "root",
@@ -193,7 +193,12 @@ class VideoWindow(QMainWindow):
 		start_time = datetime.datetime.now().replace(microsecond = 0)
 		outputFileName = "ExpressionOutput/Object" + str(object_id) + "_data.txt"
 		file = open(outputFileName, "a+")
-
+		sql = "update expressiveContent set expressionOutputFile=%s where conteent_id=%s"
+		val=(outputFileName,object_id,)
+		newcur=mydb.cursor()
+		newcur.execute(sql,val)
+		mydb.commit()
+		newcur.close()
 		while (cap.isOpened()):
 			frame_index = frame_index + 1
 			cv2.namedWindow(fileName, cv2.WINDOW_NORMAL);

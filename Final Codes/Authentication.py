@@ -122,9 +122,11 @@ class App(QWidget):
         name = self.txt_username.text()
         pwd = self.txt_pwd.text()
         print(name, " ", pwd, " ", App.trial)
+        flag = False
 
         for row in myresult:
-            if name == row[0] and pwd == row[1]: 
+            if name == row[0] and pwd == row[1]:
+                flag = True 
                 self.loadStartingPage()
                 break;
             elif name == row[0] and App.trial >= 5 :
@@ -133,8 +135,8 @@ class App(QWidget):
                 self.lbl_reset.show()
                 self.btn_reset.show()
             
-            else:
-                self.lbl_error.show()
+            #elif flag == False:
+                #self.lbl_error.show()
             
         
 
