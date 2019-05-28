@@ -21,8 +21,8 @@ import time
 import dlib
 import cv2
 import sys
-
-
+import operator
+import mysql.connector
 
 
 class GazeEstimator():
@@ -61,6 +61,13 @@ class EmotionPredictor():
 
 class VideoWindow(QMainWindow):
 
+	def __init__(self, parent=None):
+		super(VideoWindow, self).__init__(parent)
+
+		self.width_bias = 30
+		self.bias_const = 200
+		print(self.openFile())
+
 	def preliminaryHistogramEqualization(self, frame):
 		frame = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
 		h, s, v = cv2.split(frame)
@@ -96,7 +103,7 @@ class VideoWindow(QMainWindow):
 		date_time = date_time.replace(":", "-")
 		date_time = date_time.replace(" ", "-")
 		date_time = date_time.replace(".", "")
-		date_time = "../Output/" + date_time + ".txt"
+		date_time = "Output/" + date_time + ".txt"
 		
 		return date_time
 		
@@ -117,8 +124,23 @@ class VideoWindow(QMainWindow):
 	
 		
 	def openFile(self):
+		object_id = 1
+		mydb = mysql.connector.connect(
+				host = 'localhost',
+				user = "root",
+                #passwd = "ant904",
+				database = "spl"
+                #auth_plugin='mysql_native_password'
+				)
+		myCursor = mydb.cursor(buffered=True)
+		sql = "SELECT video, realExpression FROM expressiveContent where conteent_id=%s"
+		val=(object_id,)
+		myCursor.execute(sql,val)
+		row=myCursor.fetchone()
 		#fileName, _ = QFileDialog.getOpenFileName(self, "Open Video File", QDir.homePath())
-		fileName = "/home/ant/Documents/1 minute Video.mp4"
+		fileName = row[0]
+		realExpression = row[1]
+		
 		bias_const, width_range = self.find_parameters()
 		
 		video_file_flag = (fileName != '') & fileName.endswith(".mp4")
@@ -145,7 +167,7 @@ class VideoWindow(QMainWindow):
 		preference = 'center'
 		show_prefer = np.array([500, 500])
 		visual_prefer_x = np.array([0, 0, 0, 0, 0])
-		target = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
+		target = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
 
 		facial_expression = np.array([0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16])
 		w_file_name = self.fileNameFromTime()
@@ -153,11 +175,25 @@ class VideoWindow(QMainWindow):
 			
 		frame_index = -1
 		face_identified = 0
-		result = 'neutral'
+		result = 'Neutral'
 		dim = self.setDimention()
 		scrn_width = dim[0]
 		show_prefer[1] = dim[1]//2
-			
+		express={}
+		express["Angry"]=int(0)
+		express["Disgust"]=int(0)
+		express["Fear"]=int(0)
+		express["Happy"]=int(0)
+		express["Sad"]=int(0)
+		express["Surprise"]=int(0)
+		express["Disgust"]=int(0)
+		maxExpr="Neutral"
+		#print(maxExpr)
+		i=int(0)
+		start_time = datetime.datetime.now().replace(microsecond = 0)
+		outputFileName = "ExpressionOutput/Object" + str(object_id) + "_data.txt"
+		file = open(outputFileName, "a+")
+
 		while (cap.isOpened()):
 			frame_index = frame_index + 1
 			cv2.namedWindow(fileName, cv2.WINDOW_NORMAL);
@@ -168,6 +204,7 @@ class VideoWindow(QMainWindow):
 				ret, image = cap.read()
 				
 				if image is None:
+					file.close()
 					fileWriter.close()
 					capWebCam.release()
 					cv2.destroyWindow(fileName)
@@ -202,16 +239,59 @@ class VideoWindow(QMainWindow):
 					   
 					result = target[np.argmax(facial_expression)]
 					facial_expression = np.array([0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16])
+				express[result]+=1
+				'''print(express["happy"])
+				print(express["sad"])
+				print(express["neutral"])
+				print(express["fear"])'''
+				maxExpr=max(express.items(), key=operator.itemgetter(1))[0]
+
+				cur_time = datetime.datetime.now().replace(microsecond = 0)
+				time_slice = (cur_time - start_time).total_seconds()
+				#print(start_time, " ", cur_time, " ", time_slice)
+				finalResult = None
+
+				if time_slice >= 1.0:
+					finalResult = str(cur_time) + ": " + result
+					#print("Final result: ", finalResult)
+					file.write(finalResult + "\n")
+
+					font = cv2.FONT_HERSHEY_SIMPLEX
+					cv2.putText(image, finalResult, (50, 50), font, 1, (200, 0, 0), 3, cv2.LINE_AA)
+					cv2.imshow(fileName, image)
+
+					start_time = cur_time
+					time_slice = 0
 				
+
 				font = cv2.FONT_HERSHEY_SIMPLEX
-				cv2.putText(image, result, (50, 50), font, 1, (200, 0, 0), 3, cv2.LINE_AA)
+				cv2.putText(image, finalResult, (50, 50), font, 1, (200, 0, 0), 3, cv2.LINE_AA)
 				cv2.imshow(fileName, image)
 				
 				if status == 'play':
 					frame_rate = cv2.getTrackbarPos('F', 'image')
+					print(maxExpr)
+					i+=1
+					if i>=50:
+						if realExpression==maxExpr:
+							correct=1
+							print(correct)
+						else:
+							correct=0
+							print(correct)
+						print(correct)
+						sql = "update expressiveContent set isCorrect=%s where conteent_id=%s"
+						val=(correct,object_id,)
+                    	#UPDATE products SET ($fields) VALUES ($values) WHERE sku = '$checksku
+						newcur=mydb.cursor()
+						newcur.execute(sql,val)
+						mydb.commit()
+						newcur.close()
 					continue
 
 				if status == 'exit':
+					file.close()
+
 					fileWriter.close()
 					capWebCam.release()
 					cv2.destroyWindow(fileName)
@@ -220,8 +300,10 @@ class VideoWindow(QMainWindow):
 			except:
 				pass
 
+		file.close()
 		fileWriter.close()
 		capWebCam.release()
+		print("pppppppp")
 		cv2.destroyWindow(fileName)
 	
 	
@@ -243,12 +325,7 @@ class VideoWindow(QMainWindow):
 		error_master.mainloop()
 	
 	
-	def __init__(self, parent=None):
-		super(VideoWindow, self).__init__(parent)
-
-		self.width_bias = 30
-		self.bias_const = 200
-		self.openFile()
+	
 		
 	
 	def exitCall(self):

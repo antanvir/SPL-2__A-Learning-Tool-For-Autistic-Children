@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit, QMessageBox
+from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import tkinter as tk
 from StartingPage import StartingPage
-
+import mysql.connector
 
 class App(QWidget):
 
@@ -12,12 +13,15 @@ class App(QWidget):
 
     def __init__(self):
         super().__init__()
-
+        '''
         root = tk.Tk()
         self.width = root.winfo_screenwidth()
         self.height = root.winfo_screenheight()
-        self.left = 0
-        self.top = 0
+        '''
+        self.width = 700
+        self.height = 720
+        self.left = 500
+        self.top = 50
         #print(self.width, self.height)
         self.title = 'Sign Up/Sign In'
         self.initUI()
@@ -28,30 +32,30 @@ class App(QWidget):
 
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        self.setStyleSheet("background-color: rgb(117, 163, 163)");
+        self.setStyleSheet("background-color: rgb(54, 75, 109);");
 
         self.lbl_heading = QLabel("USER AUTHENTICATION", self)
-        self.lbl_heading.setStyleSheet("font-size: 25px; font-weight: bold; color: blue;")
-        self.lbl_heading.setGeometry(4*horUnit, 1*verUnit, 4*horUnit, 0.6*verUnit)
+        self.lbl_heading.setStyleSheet("font-size: 22px; font-weight: bold; color: white;")
+        self.lbl_heading.setGeometry(3.5*horUnit, 1*verUnit, 4.5*horUnit, 0.6*verUnit)
 
         self.lbl_username = QLabel("Username", self)
-        self.lbl_username.setStyleSheet("font-size: 16px; font-weight: bold;")
-        self.lbl_username.setGeometry(2*horUnit, 3*verUnit, 1.5*horUnit, 0.6*verUnit)
+        self.lbl_username.setStyleSheet("font-size: 16px; font-weight: bold; color: white;")
+        self.lbl_username.setGeometry(1*horUnit, 3*verUnit, 1.5*horUnit, 0.6*verUnit)
 
         self.txt_username = QLineEdit(self)
         self.txt_username.setPlaceholderText("username")
         self.txt_username.setStyleSheet("background-color: white")
-        self.txt_username.setGeometry(4*horUnit, 3*verUnit, 5.5*horUnit, 0.6*verUnit)
+        self.txt_username.setGeometry(3.5*horUnit, 3*verUnit, 7*horUnit, 0.6*verUnit)
 
         self.lbl_pwd = QLabel("Password", self)
-        self.lbl_pwd.setStyleSheet("font-size: 16px; font-weight: bold;")
-        self.lbl_pwd.setGeometry(2*horUnit, 4.5*verUnit, 1.5*horUnit, 0.6*verUnit)
+        self.lbl_pwd.setStyleSheet("font-size: 16px; font-weight: bold; color: white;")
+        self.lbl_pwd.setGeometry(1*horUnit, 4.5*verUnit, 1.5*horUnit, 0.6*verUnit)
 
         self.txt_pwd = QLineEdit(self)
         self.txt_pwd.setPlaceholderText("Password")
         self.txt_pwd.setEchoMode(QLineEdit.Password)
         self.txt_pwd.setStyleSheet("background-color: white")
-        self.txt_pwd.setGeometry(4*horUnit, 4.5*verUnit, 5.5*horUnit, 0.6*verUnit)
+        self.txt_pwd.setGeometry(3.5*horUnit, 4.5*verUnit, 7*horUnit, 0.6*verUnit)
 
         self.btn_signUp = QPushButton('Sign Up', self)
         self.btn_signUp.setStyleSheet("background-color: lightgray; font-size: 16px; font-weight: bold;")
@@ -72,25 +76,39 @@ class App(QWidget):
         self.lbl_reset = QLabel("Want to reset password?", self)
         self.lbl_reset.setGeometry(2*horUnit, 6.5*verUnit, 5*horUnit, 0.5*verUnit)
         self.lbl_reset.hide()
-        self.lbl_reset.setStyleSheet("font-size: 12px; font-weight: bold; color: lightgray;")
+        self.lbl_reset.setStyleSheet("font-size: 18px; font-weight: bold; color: lightgray; color: blue;")
+        
+
+        self.lbl_error = QLabel("Wrong Password. Try again!", self)
+        self.lbl_error.setGeometry(4*horUnit, 5.5*verUnit, 5*horUnit, 0.5*verUnit)
+        self.lbl_error.hide()
+        self.lbl_error.setStyleSheet("font-size: 18px; font-weight: bold; color: lightgray; color: red;")
 
         self.show()
 
 
     def on_click_signUp(self):
-        #self.storeIntoDatabase()
+        self.storeIntoDatabase()
+
+        messageBox = QtWidgets.QMessageBox()
+        messageBox.setIcon(QtWidgets.QMessageBox.Information)
+        messageBox.setWindowTitle("Sign Up")
+        messageBox.setText("Sign Up Successful!")
+        messageBox.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
+        messageBox.exec_()
+       
         self.loadStartingPage()
 
 
     def on_click_signIn(self):
-        '''
+        
         App.trial +=1
 
         mydb = mysql.connector.connect(
               host="localhost",
-              user="yourusername",
-              passwd="yourpassword",
-              database="mydatabase"
+              user="root",
+              #passwd="yourpassword",
+              database="spl"
             )
 
         mycursor = mydb.cursor()
@@ -103,27 +121,33 @@ class App(QWidget):
             
         name = self.txt_username.text()
         pwd = self.txt_pwd.text()
-        print(name, " ", pwd)
+        print(name, " ", pwd, " ", App.trial)
 
         for row in myresult:
             if name == row[0] and pwd == row[1]: 
-                loadStartingPage()
+                self.loadStartingPage()
                 break;
             elif name == row[0] and App.trial >= 5 :
                 App.username = name
-                txt_pwd.setText("");
-                lbl_reset.show()
-                btn_reset.show()
-        '''
+                self.txt_pwd.setText("");
+                self.lbl_reset.show()
+                self.btn_reset.show()
+            
+            else:
+                self.lbl_error.show()
+            
+        
 
 
     def on_click_reset(self):
-        '''
+        
         App.trial = 0
+        self.lbl_error.hide()
+
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-            passwd = "ant904",
+            #passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)
@@ -139,16 +163,33 @@ class App(QWidget):
         #print(myCursor.rowcount, "record inserted.")
         myCursor.close()
         mydb.close()
+        
+        
+        
+        if self.txt_pwd.text() != "":
+            messageBox = QtWidgets.QMessageBox()
+            messageBox.setIcon(QtWidgets.QMessageBox.Information)
+            messageBox.setWindowTitle("Password Reset")
+            messageBox.setText("Password Reset Successful!")
+            messageBox.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
+            messageBox.exec_()
 
-        self.loadStartingPage()
-        '''
+            self.loadStartingPage()
+        else:
+            messageBox = QtWidgets.QMessageBox()
+            messageBox.setIcon(QtWidgets.QMessageBox.Information)
+            messageBox.setWindowTitle("Input Not Found")
+            messageBox.setText("Please fill up the password field.")
+            messageBox.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Close)
+            messageBox.exec_()
+        
 
 
     def storeIntoDatabase(self):
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-            passwd = "ant904",
+            #passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)

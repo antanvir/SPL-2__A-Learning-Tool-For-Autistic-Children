@@ -3,7 +3,7 @@ from PyQt5.QtCore import QDir, Qt, QUrl
 from PyQt5 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel, QMessageBox,
                              QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget)
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton
@@ -55,7 +55,7 @@ class App(QWidget):
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-            passwd = "ant904",
+            #passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)
@@ -131,40 +131,40 @@ class App(QWidget):
         # audio button widget
         self.audioButton = QPushButton('\t PLAY AUDIO \t', self)
         self.audioButton.setToolTip('play audio')
-        self.audioButton.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
+        self.audioButton.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold;")
         self.audioButton.setGeometry(7*horUnit, 9.5*verUnit, 4.5*horUnit, 0.5*verUnit)
         self.audioButton.clicked.connect(lambda: self.play_audio(App.audio))                # NECESSARY
 
         # Previous button widget
         self.buttonP = QPushButton('\t PREVIOUS IMAGE \t', self)
         self.buttonP.setToolTip('Go to previous picture')
-        self.buttonP.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
+        self.buttonP.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold;")
         self.buttonP.setGeometry(0.5*horUnit, 9.5*verUnit, 1.2*horUnit, 0.5*verUnit)
         self.buttonP.clicked.connect(self.on_click_prev)
 
         # Skip button widget
         self.buttonS = QPushButton('\t SKIP THIS OBJECT \t', self)
         self.buttonS.setToolTip('Skip this object')
-        self.buttonS.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
-        self.buttonS.setGeometry(2*horUnit, 9.5*verUnit, 1.5*horUnit, 0.5*verUnit)
+        self.buttonS.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold; color: blue;")
+        self.buttonS.setGeometry(2*horUnit, 9.8*verUnit, 1.5*horUnit, 0.7*verUnit)
         self.buttonS.clicked.connect(self.on_click_skip)
 
         # Next button widget
         self.buttonN = QPushButton('\t NEXT IMAGE \t', self)
         self.buttonN.setToolTip('Go to next picture')
-        self.buttonN.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
+        self.buttonN.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold;")
         self.buttonN.setGeometry(3.8*horUnit, 9.5*verUnit, 1.2*horUnit, 0.5*verUnit)
         self.buttonN.clicked.connect(self.on_click_next)
 
-
+        '''
         # Question Window load button widget
         self.btnQues = QPushButton('\t TAKE A TEST \t', self)
-        self.btnQues.setToolTip('Go to next picture')
-        self.btnQues.setStyleSheet("background-color: lightgray; font-size: 12px; font-weight: bold;")
-        self.btnQues.setGeometry(4.6*horUnit, 9.3*verUnit, 1.8*horUnit, 0.8*verUnit)
+        self.btnQues.setToolTip('Answer Question on this Object')
+        self.btnQues.setStyleSheet("background-color: lightgray; font-size: 18px; font-weight: bold; color: blue;")
+        self.btnQues.setGeometry(5.3*horUnit, 9.4*verUnit, 1.4*horUnit, 0.7*verUnit)
         self.btnQues.clicked.connect(self.on_click_test)
         self.btnQues.hide()
-
+        '''
 
         # OBJECT NAME LABEL
         self.lblObjName = QLabel(self)
@@ -239,7 +239,7 @@ class App(QWidget):
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-            passwd = "ant904",
+            #passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor()
@@ -281,13 +281,13 @@ class App(QWidget):
             self.showImage(App.img[App.curFileId - 1])
 
     def on_click_next(self):
-        self.btnQues.hide()
+        #self.btnQues.hide()
         
         if (App.curFileId + 1) > App.total:
             mydb = mysql.connector.connect(
                 host = 'localhost',
                 user = "root",
-                passwd = "ant904",
+                #passwd = "ant904",
                 database="spl"
             )
             myCursor = mydb.cursor()
@@ -320,17 +320,25 @@ class App(QWidget):
                 self.showObjectNameImage(App.objNameImg)
                 # self.buttonN.hide()
             else:
-                App.alreadyLearned.append(App.ObjectID - 1)
+                         
+                title = "Answer Question!"
+                ques = "Want to take a Test on this Object?\t"
+                reply = QMessageBox.question(self, title, ques, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
-                self.showImage(App.img[App.curFileId - 1])
+                if reply == QtWidgets.QMessageBox.Yes:
+                    print('Yes clicked.')
+                    self.on_click_test()
+                else:
+                    print('No clicked.')
+                    App.alreadyLearned.append(App.ObjectID - 1)
 
-                self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
-                self.playButton.setEnabled(True)
+                    self.showImage(App.img[App.curFileId - 1])
 
-                self.showObjectNameImage(App.objNameImg)
+                    self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+                    self.playButton.setEnabled(True)
 
-                #self.showQuestionWindow(App.ObjectID - 1)
-                self.btnQues.show()
+                    self.showObjectNameImage(App.objNameImg)
+
         else:
             self.buttonP.show()
             App.curFileId += 1
@@ -340,7 +348,7 @@ class App(QWidget):
         mydb = mysql.connector.connect(
             host = 'localhost',
             user = "root",
-            passwd = "ant904",
+            #passwd = "ant904",
             database="spl"
         )
         myCursor = mydb.cursor(buffered=True)
@@ -374,7 +382,16 @@ class App(QWidget):
 
     def on_click_test(self):
         self.showQuestionWindow(App.ObjectID - 1)
-        self.btnQues.hide()
+        #self.btnQues.hide()
+        
+        App.alreadyLearned.append(App.ObjectID - 1)
+
+        self.showImage(App.img[App.curFileId - 1])
+
+        self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(App.video)))     # NECESSARY
+        self.playButton.setEnabled(True)
+
+        self.showObjectNameImage(App.objNameImg)
 
 
     def showQuestionWindow(self,objectID):
@@ -382,7 +399,7 @@ class App(QWidget):
         self.ui = Ui_MainWindow()
         #self.ui.setupUi()
         select=False
-        self.ui.setDB(objectID)
+        self.ui.setDB(objectID,select)
         self.QuesWindow.show()
 
 
@@ -390,3 +407,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     obj = App()
     sys.exit(app.exec_())
+

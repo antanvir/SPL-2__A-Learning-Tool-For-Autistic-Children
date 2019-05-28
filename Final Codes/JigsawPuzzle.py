@@ -6,17 +6,22 @@ import math
 import pygame
 import mysql.connector
 from pygame.locals import *
+from time import sleep
+from PyQt5 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel, QMessageBox,
+                             QPushButton, QSizePolicy, QSlider, QStyle, QVBoxLayout, QWidget)
+
 
 class JigsawPuzzle():
 
-    
+	
 	def initGame(self,ObjectID):
 		mainImagePath, part1_path, part2_path, part3_path, part4_path = None, None, None, None, None
 		
 		mydb = mysql.connector.connect(
 			host = 'localhost',
-		    user = "root",
-		    passwd = "ant904",
+			user = "root",
+			#passwd = "ant904",
 			database="spl"
 		)
 		myCursor = mydb.cursor(buffered=True)
@@ -66,7 +71,7 @@ class JigsawPuzzle():
 		SILVER = (192, 192, 192)
 		GRAY = (128, 128, 128)
 		BLACK = (0, 0, 0)
-		CUSTOM_DISPLAY = (30, 89, 94)
+		CUSTOM_DISPLAY = (54, 75, 109)		#rgb(54, 75, 109)
 		FONT_COLOR = (0, 255, 0)
 
 		silver_rect = pygame.Surface((TILE_WIDTH , TILE_HEIGHT))
@@ -154,6 +159,7 @@ class JigsawPuzzle():
 		isQuit = False
 		waitFlag = False
 		gameOverTime = None
+		counter = 0
 
 		while True:
 
@@ -181,7 +187,9 @@ class JigsawPuzzle():
 				timerText = gameFont.render('Elapsed Time : ' + gameOverTime, False, FONT_COLOR)
 				display.blit(gameOverText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]-ver_gap))
 				display.blit(timerText, (6*deviceDisplay.current_w/8, BLANK_TILE1[1]))
+			
 
+			
 
 			for event in pygame.event.get():
 
@@ -300,6 +308,19 @@ class JigsawPuzzle():
 
 
 				pygame.display.flip()
+
+				'''
+				if waitFlag == True and counter < 1:
+					counter += 1
+					title = "Puzzle Game"
+					ques = "Want to play another Game?\t"
+					reply = QMessageBox.question(None, title, ques, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+					if reply == QtWidgets.QMessageBox.Yes:
+						ObjectID += 1
+						self.game = JigsawPuzzle()
+						self.game.initGame(ObjectID)
+				'''
 				display.fill(CUSTOM_DISPLAY, screen_middle)
 				display.fill(CUSTOM_DISPLAY, screen_left)
 				display.fill(CUSTOM_DISPLAY, screen_right)
@@ -328,6 +349,19 @@ class JigsawPuzzle():
 					display.blit(image4, (BLANK_TILE4[0], BLANK_TILE4[1]))
 				else:
 					display.blit(silver_rect, (BLANK_TILE4[0], BLANK_TILE4[1]))
+					
+
+				if waitFlag == True and counter < 1:
+					counter += 1
+					title = "Puzzle Game"
+					ques = "Want to play another Game?\t"
+					reply = QMessageBox.question(None, title, ques, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+					if reply == QtWidgets.QMessageBox.Yes:
+						ObjectID += 1
+						self.game = JigsawPuzzle()
+						self.game.initGame(ObjectID)
+
 
 				if image1_placed and image2_placed and image3_placed and image4_placed and waitFlag == False:
 
@@ -335,6 +369,8 @@ class JigsawPuzzle():
 					times = cur_time - start_time
 					gameOverTime = str(times)
 					print(times)
+					waitFlag = True
+
 					mCursor = mydb.cursor(buffered=True)
 					sql = "update game set elapsedTime=%s where game_id=%s"
 					val = (gameOverTime,ObjectID,)
@@ -343,7 +379,8 @@ class JigsawPuzzle():
 					mydb.commit()
 					mCursor.close()	
 					mydb.close()
-					waitFlag = True
+
+
 
 
 	def pointerIsInSurface(self, mouseX, mouseY, TILE):

@@ -3,12 +3,16 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QMainWindow, QPushButton, QLabel
+from PyQt5.QtGui import QPainter, QColor, QFont, QPen
 import tkinter as tk
 
-#from LearningModule import App
-#from JigsawPuzzle import JigsawPuzzle
-#from UserDevelopment import UserDevelopment
-#from new_qus import Ui_MainWindow
+from LearningModule import App
+from JigsawPuzzle import JigsawPuzzle
+from UserDevelopment import UserDevelopment
+from new_qus import Ui_MainWindow
+from additem import Ui_Form
+from backend_qus import Ui_FormQ
+from ExpressionDetection import VideoWindow, EmotionPredictor, GazeEstimator
 
 class StartingPage(QWidget):
     def __init__(self, parent=None):
@@ -25,6 +29,8 @@ class StartingPage(QWidget):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setStyleSheet("background-color: rgb(54, 75, 109);")
 
+
+        self.ID = 1
         self.initUI()
 
     def initUI(self):
@@ -60,49 +66,63 @@ class StartingPage(QWidget):
 
         self.label2 = QLabel(self)
         self.label2.setText("CONFIGURATION & PROFILE\n_____________________________")
-        self.label2.setGeometry(0.5*horUnit, 0.5*verUnit, 3*horUnit, 1.5*verUnit)
-        self.label2.setStyleSheet("color: white; font-size: 23px; font-weight: bold;")
+        self.label2.setGeometry(0.4*horUnit, 0.5*verUnit, 3*horUnit, 1.5*verUnit)
+        self.label2.setStyleSheet("color: silver; font-size: 23px; font-weight: bold;")
         self.label2.setAlignment(Qt.AlignCenter)
         
         self.btn4 = QPushButton("SHOW  DEVELOPMENT", self)
-        self.btn4.setGeometry(0.5*horUnit, 3*verUnit, 3*horUnit, 0.5*verUnit)
-        self.btn4.setStyleSheet("background-color: white; font-weight: bold; font-size: 20px; color: black;")
+        self.btn4.setGeometry(0.5*horUnit, 3*verUnit, 2.6*horUnit, 0.4*verUnit)
+        self.btn4.setStyleSheet("background-color: silver; font-weight: bold; font-size: 20px; color: black;")
         self.btn4.clicked.connect(self.btn_4_clicked)
 
         self.btn5 = QPushButton("ADD  MORE  OBJECTS ", self)
-        self.btn5.setGeometry(0.5*horUnit, 4.5*verUnit, 3*horUnit, 0.5*verUnit)
-        self.btn5.setStyleSheet("background-color: white; font-weight: bold; font-size: 20px; color: black;")
+        self.btn5.setGeometry(0.5*horUnit, 4.5*verUnit, 2.6*horUnit, 0.4*verUnit)
+        self.btn5.setStyleSheet("background-color: silver; font-weight: bold; font-size: 20px; color: black;")
         self.btn5.clicked.connect(self.btn_5_clicked)
 
         self.btn6 = QPushButton("SET  NEW  QUESTIONS", self)
-        self.btn6.setGeometry(0.5*horUnit, 6*verUnit, 3*horUnit, 0.5*verUnit)
-        self.btn6.setStyleSheet("background-color: white; font-weight: bold; font-size: 20px; color: black;")
+        self.btn6.setGeometry(0.5*horUnit, 6*verUnit, 2.6*horUnit, 0.4*verUnit)
+        self.btn6.setStyleSheet("background-color: silver; font-weight: bold; font-size: 20px; color: black;")
         self.btn6.clicked.connect(self.btn_6_clicked)
+
+    
+    def paintEvent(self, event):
+        horUnit = int(self.width / 12)
+        verUnit = int(self.height / 12)
+
+        painter = QPainter()
+        painter.begin(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setPen(QPen(Qt.white, 4, Qt.SolidLine))
+        painter.setBrush(QtCore.Qt.white)
+        painter.drawLine(3.6*horUnit, 0.5*verUnit, 3.6*horUnit, 11*verUnit)
         
 
 
     def btn_1_clicked(self):
         self.learn = App()
         self.learn.show()
+        self.ID = self.learn.ObjectID
 
 
     def btn_2_clicked(self):
-
+        #self.obj = App()
         self.game = JigsawPuzzle()
-        self.game.initGame(2)
+        self.game.initGame(self.ID)
+        #self.game.initGame(1)
        
 
-    def btn_3_clicked(self):
-        self.dev = UserDevelopment()
-        self.dev.show()
+    def btn_3_clicked(self):					# Expressive Content
+        self.exp = VideoWindow()
+        self.exp.show()
 
-    def btn_4_clicked(self):
+    '''def btn_4_clicked(self):
         self.QuesWindow = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()
         #self.ui.setupUi()
         select=False
         self.ui.setDB(objectID)
-        self.QuesWindow.show()
+        self.QuesWindow.show()'''
 
 
     def btn_4_clicked(self):
@@ -110,12 +130,16 @@ class StartingPage(QWidget):
         self.dev.show()
 
     def btn_5_clicked(self):
-        self.addObj = UserDevelopment()
-        self.addObj.show()
+        self.Form = QtWidgets.QWidget()
+        self.ui = Ui_Form()
+        self.ui.setupUi(self.Form)
+        self.Form.show()
 
     def btn_6_clicked(self):
-        self.addQues = UserDevelopment()
-        self.addQues.show()
+        self.Form = QtWidgets.QWidget()
+        self.ui = Ui_FormQ()
+        self.ui.setupUi(self.Form)
+        self.Form.show()
 
 def main():
     app = QApplication(sys.argv)
@@ -126,3 +150,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
