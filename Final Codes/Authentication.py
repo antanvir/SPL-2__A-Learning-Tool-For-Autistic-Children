@@ -103,6 +103,7 @@ class App(QWidget):
     def on_click_signIn(self):
         
         App.trial +=1
+        self.lbl_error.hide()
 
         mydb = mysql.connector.connect(
               host="localhost",
@@ -137,7 +138,8 @@ class App(QWidget):
             
             #elif flag == False:
                 #self.lbl_error.show()
-            
+        if flag == False:
+                self.lbl_error.show()   
         
 
 

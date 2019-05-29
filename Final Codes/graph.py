@@ -70,10 +70,10 @@ class ThreadSample(QtCore.QThread):
 
         randomSample = random.sample(range(0, 10), 10)
         print(randomSample)
-        #self.newSample.emit(qusTimeList)
+        self.newSample.emit(qusTimeList)
         self.newSample.emit(gameTimeList)
         #self.newSample.emit(controlqusTime) #############ei duita line thakbe###########
-        self.newSample.emit(testQusTIme)
+        #self.newSample.emit(testQusTIme)
         mydb.commit()
         myCursor.close()
         mydb.close()

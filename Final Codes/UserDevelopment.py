@@ -220,13 +220,14 @@ class UserDevelopment(QWidget):
 
         self.expOutput = QPlainTextEdit(self)
         self.expOutput.setReadOnly(True)
+        self.expOutput.setUndoRedoEnabled(True)
         self.expOutput.setStyleSheet("font-size: 17px; background-color: silver;")
-        self.expOutput.insertPlainText("[ Expression output ]:\n_________________________\n\n")
+        self.expOutput.insertPlainText("[ Expression output ]:\n_____________________\n\n")
 
         self.expOutput1 = QPlainTextEdit(self)
         self.expOutput1.setReadOnly(True)
         self.expOutput1.setStyleSheet("font-size: 17px; background-color: silver;")
-        self.expOutput1.insertPlainText("[ Eye-gaze output ]:\n_________________________\n\n")
+        self.expOutput1.insertPlainText("[ Eye-gaze output ]:\n_____________________\n\n")
         
 
         hbx = QHBoxLayout()                     #QComboBox
@@ -266,16 +267,24 @@ class UserDevelopment(QWidget):
 
 
     def selectionchangeExp(self,i):
+        self.expOutput.setPlainText("")
         filename = "ExpressionOutput/" + self.ShowExpressionData.currentText()
         file = open(filename, "r")
-        contents = file.read()
+
+        contents = "[ Expression output ]:\n___________________\n\n"
+        contents += "** " + self.ShowExpressionData.currentText() + " **\n\n"
+        contents += file.read()
         print(contents)
         self.expOutput.insertPlainText(contents)
 
     def selectionchangeEye(self,i):
-        filename = "EyeGazeOutput/" + self.ShowExpressionData.currentText()
+        self.expOutput1.setPlainText("")
+        filename = "EyeGazeOutput/" + self.ShowEyeGazeData.currentText()
         file = open(filename, "r")
-        contents = file.read()
+
+        contents = "[ Eye-gaze output ]:\n_________________\n\n"
+        contents += "** " + self.ShowEyeGazeData.currentText() + " **\n\n"
+        contents += file.read()
         print(contents)
         self.expOutput1.insertPlainText(contents)
 

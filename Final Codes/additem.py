@@ -17,7 +17,7 @@ class Ui_Form(object):
         Form.setAutoFillBackground(True)
         
         p = Form.palette()
-        p.setColor(Form.backgroundRole(), QtGui.QColor(235, 255, 211))
+        p.setColor(Form.backgroundRole(), QtGui.QColor(188, 196, 195))
         Form.setPalette(p)
 
         #Form.setStyleSheet("background-color : rgb(47,76,122)");
