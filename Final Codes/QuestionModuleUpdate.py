@@ -8,7 +8,7 @@ import tkinter as tk
 
 
 class QuestionWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, objectID, select, parent=None):
         super(QuestionWindow, self).__init__(parent)
 
         root = tk.Tk()
@@ -21,6 +21,9 @@ class QuestionWindow(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.setStyleSheet("background-color: white;")
+
+        self.objectID = objectID
+        self.select = select
 
         self.setupUI()
 
@@ -96,8 +99,12 @@ class QuestionWindow(QWidget):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    object_id=int(1)
-    select = False
-    display = QuestionWindow()
+    display = QuestionWindow(objectID = 1, select = False)
     display.show()
     sys.exit(app.exec_())
+
+
+# # Learning Module theke call , amartay run hoy na tai test kora gelo na LearningModule theke #
+        # self.QuesWindow = QtWidgets.QMainWindow()
+        # self.obj = QuestionWindow(self.objectID, select = False) # self.obj hsse class instance
+        # self.QuesWindow.show()
