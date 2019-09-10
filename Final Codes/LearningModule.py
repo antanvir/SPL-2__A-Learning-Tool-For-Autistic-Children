@@ -13,7 +13,7 @@ import mysql.connector
 from PyQt5.QtMultimedia import QSound
 import tkinter as tk
 from new_qus import Ui_MainWindow
-
+from Question import QuestionWindow
 
 class App(QWidget):
 
@@ -381,7 +381,6 @@ class App(QWidget):
 
 
     def on_click_test(self):
-        self.showQuestionWindow(App.ObjectID - 1)
         #self.btnQues.hide()
         
         App.alreadyLearned.append(App.ObjectID - 1)
@@ -393,15 +392,19 @@ class App(QWidget):
 
         self.showObjectNameImage(App.objNameImg)
 
+        self.showQuestionWindow(App.ObjectID - 1)
 
     def showQuestionWindow(self,objectID):
         self.QuesWindow = QtWidgets.QMainWindow()
-        self.ui = Ui_MainWindow()
+        #self.ui = QuestionWindow()
         #self.ui.setupUi()
         select=False
-        self.ui.setDB(objectID,select)
-        self.QuesWindow.show()
+        self.ui=QuestionWindow(objectID, select)
 
+        self.QuesWindow.show()
+        self.ui.show()
+        self.QuesWindow = QtWidgets.QMainWindow()
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
